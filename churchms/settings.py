@@ -98,22 +98,30 @@ WSGI_APPLICATION = 'churchms.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ["PGDATABASE"],
-        'USER': os.environ["PGUSER"],
-        'PASSWORD': os.environ["PGPASSWORD"],
-        'HOST': os.environ["PGHOST"],
-        'PORT': os.environ["PGPORT"],
-        'CONN_MAX_AGE': 3600
-    },
+if DEBUG:
+  DATABASES = {
     'sqlite': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        'CONN_MAX_AGE': 3600
+      'ENGINE': 'django.db.backends.sqlite3',
+      'NAME': BASE_DIR / 'db.sqlite3',
+      'CONN_MAX_AGE': 3600
     }
-}
+  }
+  
+  EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+  EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+  # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+else:
+  DATABASES = {
+    'default': {
+      'ENGINE': 'django.db.backends.postgresql_psycopg2',
+      'NAME': os.environ["PGDATABASE"],
+      'USER': os.environ["PGUSER"],
+      'PASSWORD': os.environ["PGPASSWORD"],
+      'HOST': os.environ["PGHOST"],
+      'PORT': os.environ["PGPORT"],
+      'CONN_MAX_AGE': 3600
+    }
+  }
 
 
 CONN_HEALTH_CHECKS = True
@@ -235,11 +243,6 @@ SERVER_EMAIL = os.environ['EMAIL_USER']
 #     'https://your-base-domain'
 # ]
 
-# if DEBUG:
-#   EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-#   EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
-#   # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-# else:
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587

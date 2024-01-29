@@ -19,8 +19,6 @@ class UserViewSet(viewsets.ModelViewSet):
   serializer_class = UserSerializer
 
 class UserRegisterView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, CreateView):
-  model = User
-  # fields = ['username', 'email', 'password', 'first_name', 'last_name', 'groups']
   form_class = CustomUserCreationForm
   template_name = 'users/register.html'
   success_url = reverse_lazy('users-view')
@@ -30,9 +28,7 @@ class UserRegisterView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessa
     return 'User successfully created'
 
 class UserUpdateView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
-  model = User
   form_class = CustomUserUpdateForm
-  # fields = ['username', 'email', 'first_name', 'last_name', 'passport', 'groups']
   template_name = 'users/register.html'
   success_url = reverse_lazy('users-view')
   permission_required = ["auth.change_user"]
