@@ -1,0 +1,24 @@
+<div>
+  <div class="table-responsive">
+    <table class="table table-hover table-striped">
+      <thead>
+        <tr>
+          <th>
+            <input type="checkbox" class="form-checkbox" id="chkCheckAll" />
+          </th>
+          <th>Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for parishioner in parishioners %}
+          <tr>
+            <td>
+              <input type="checkbox" class="form-checkbox" name="id[]" />
+            </td>
+            <td>{{ parishioner.fullname }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

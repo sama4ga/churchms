@@ -1,0 +1,32 @@
+{% extends 'church/base.html' %}
+{% block container %}
+<div>
+  <h1>Organisation Info - {{ organisationinfo_list.0.organisation.short_name }}</h1>
+  
+  <div class="table-responsive">
+    <table class="table table-hover table-striped">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Station</th>
+          <th>Meeting Info</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for info in organisationinfo_list %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ info.station.name }}</td>
+            <td>{{ info.meeting_info }}</td>
+            <td style="text-wrap:nowrap; vertical-align:middle;">
+              <a href="{% url 'organisation-members' info.id %}" class="primary mr-2 p-2" title='View Members'><i class="fa fa-users"></i></a>
+              <a href="{% url 'organisation-info-update' info.organisation_id info.id %}" class="info mr-2 p-2" title='Edit'><i class="fa fa-pencil"></i></a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

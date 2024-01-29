@@ -1,0 +1,32 @@
+{% extends 'church/base.html' %}
+{% load widget_tweaks %}
+
+{% block container %}
+<div style="max-width:400px; min-width:100px;" class="mx-auto p-4 my-4 card">
+  <h1 class="card-header bg-white">Login</h1>
+  <div class="card-body">
+    <form method="POST">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">{{ error }}</div>
+      {% endfor %}
+    {% endif %}
+    
+    {% for field in form %}
+      <div class='mb-3'>
+        {{ field.label_tag }}
+        {% render_field field class='form-control' %}
+        <small class="text-danger">{{ field.errors }}</small>
+      </div>
+    {% endfor %}
+    <div align="right" class="mb-3">
+      <a href="{% url 'users-password-reset' %}">Forgot password?</a>
+    </div>
+    <div class="mb-3">
+      <input type="submit" value="Login" class="btn btn-md btn-outline-primary form-control" />
+    </div>
+  </form>
+  </div>
+</div>
+{% endblock %}

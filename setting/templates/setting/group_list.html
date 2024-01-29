@@ -1,0 +1,35 @@
+{% extends 'church/base.html' %}
+{% load widget_tweaks %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">Groups</li>
+{% endblock %}
+
+{% block container %}
+
+<h1>Groups</h1>
+<div class="table-responsive">.
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for group in groups %}
+        <tr>
+          <td>{{forloop.counter}}</td>
+          <td>{{group.name}}</td>
+          <td>
+            <a href="{% url 'setting-group_permissions' group.id %}" title="Permissions"><i class="fa fa-tag"></i></a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+  
+
+{% endblock %}

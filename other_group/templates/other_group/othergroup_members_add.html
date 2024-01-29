@@ -1,0 +1,87 @@
+{% extends 'church/base.html' %}
+{% load widget_tweaks %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+  <a href="{% url 'other_group-view' %}">Other Group</a>
+</li>
+<li class="breadcrumb-item">
+  <a href="{% url 'other_group-members' other_group.id %}">Members</a>
+</li>
+<li class="breadcrumb-item">Add</li>
+{% endblock %}
+
+{% block container %}
+  <h1>Choose Member(s) to add to {{other_group}}</h1>
+  <form method="post" action="{% url 'other_group-members-add' other_group.id %}">
+    {% csrf_token %}
+    <div class="table-responsive">
+      <table class="table table-bordered datatable w-100 display" data-exportTitle='' id="datatable">
+        <thead>
+          <tr>
+            <th>
+              <input type="checkbox" id="select-all" />
+            </th>
+            <th>Name</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+    <div class="my-3">
+      <button type="submit" class="btn btn-primary">Add</button>
+    </div>
+  </form>
+{% endblock %}
+
+{% block script %}
+<script>
+  $(document).ready(function(){
+  const dt = $('.datatable').DataTable({
+      order: [],
+      dom: 'lftip',
+      processing: false,
+      serverSide: true,
+      ajax: {
+        url: baseurl + '/api/parishioner/datatable/',
+        dataSrc: 'data',
+        "data": function ( d ) {
+          //d.status = 'Active';
+          d.add_members = 'True';
+          d.other_group_id = '{{other_group.id}}';
+          d = __datatable_ajax_callback(d);
+        }
+      },
+      columns: [
+        {
+          data: null,
+          render: function (data, type, row) {
+              return `<input type="checkbox" name="ids" value="${row.id}" class="form-checkbox" />`;
+          },
+          searchable:false, orderable: false
+        },
+        { 
+          data: null, 
+          render: function (data, type, row) {
+           const detailUrl = "{% url 'parishioner-detail' 0 %}".replace(/0/, row.id.toString());
+            return `<a href="${detailUrl}" class="" title="View Parishioner Detail">
+                  ${row.fullname}
+                </a>`;
+          },
+          searchable:false, orderable: false 
+        }
+      ]
+    });
+    
+  $('#select-all').on('change', (e) => {
+    if(e.target.checked){
+      $('.form-checkbox').prop('checked', true);
+    }else{
+      $('.form-checkbox').prop('checked', false);
+    }
+  });
+  
+});
+  
+  
+</script>
+{% endblock %}

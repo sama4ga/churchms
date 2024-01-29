@@ -1,0 +1,224 @@
+{% extends 'church/base.html' %}
+{% load widget_tweaks %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">Setting</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1>Setting</h1>
+
+  <div class="card card-body">
+    <div class="row" style="row-gap: 20px;">
+      <ul class="col-md-4 nav nav-pills flex-column setting" style="gap: 10px;">
+        <li class="p-2 m-2 border-bottom active">
+          <a data-toggle="pill" href="#church">Church Setting <span class="float-right"><i class="fa fa-angle-right"></i></span></a>
+        </li>
+        <!-- <li class="p-2 m-2 border-bottom">
+          <a data-toggle="pill" href="#email">Email Setting <span class="float-right"><i class="fa fa-angle-right"></i></span></a>
+        </li> -->
+        <li class="p-2 m-2 border-bottom">
+          <a data-toggle="pill" href="#baptism">Baptism Setting <span class="float-right"><i class="fa fa-angle-right"></i></span></a>
+        </li>
+        <li class="p-2 m-2 border-bottom">
+          <a data-toggle="pill" href="#communion">Communion Setting <span class="float-right"><i class="fa fa-angle-right"></i></span></a>
+        </li>
+        <li class="p-2 m-2 border-bottom">
+          <a data-toggle="pill" href="#confirmation">Confirmation Setting <span class="float-right"><i class="fa fa-angle-right"></i></span></a>
+        </li>
+        <li class="p-2 m-2">
+          <a data-toggle="pill" href="#matrimony">Matrimony Setting <span class="float-right"><i class="fa fa-angle-right"></i></span></a>
+        </li>
+      </ul>
+      <div class="col-md-8" id="form">
+        <div class="tab-content">
+          <div id="church" class="tab-pane fade-in active">
+            <h3>Church Setting</h3>
+            <div>
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                {% if general_form.non_field_errors %}
+                  {% for error in general_form.non_field_errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                  {% endfor %}
+                {% endif %}
+                
+                {% for field in general_form %}
+                <input type="hidden" name="action" value="church" />
+                  <div class="mb-3">
+                    {{ field.label_tag }}
+                    {% render_field field class='form-control' %}
+                    <small class="text-danger">{{ field.errors }}</small>
+                  </div>
+                {% endfor %}
+                
+                <div class="mb-3">
+                  <input type="submit" value="Save"  class="btn btn-md btn-outline-primary" />
+                </div>
+                
+              </form>
+            </div>
+          </div>
+          <div id="email" class="tab-pane fade">
+            <h3>Email Setting</h3>
+            <div>
+              <form method="post">
+                {% csrf_token %}
+                
+                {% if email_form.non_field_errors %}
+                  {% for error in email_form.non_field_errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                  {% endfor %}
+                {% endif %}
+                
+                {% for field in email_form %}
+                <input type="hidden" name="action" value="email" />
+                  <div class="mb-3">
+                    {{ field.label_tag }}
+                    {% render_field field class='form-control' %}
+                    <small class="text-danger">{{ field.errors }}</small>
+                  </div>
+                {% endfor %}
+                
+                <div class="mb-3">
+                  <input type="submit" value="Save"  class="btn btn-md btn-outline-primary" />
+                </div>
+                
+              </form>
+            </div>
+          </div>
+          <div id="baptism" class="tab-pane fade">
+            <h3>Baptism Setting</h3>
+            <div>
+              <form method="post">
+                {% csrf_token %}
+                
+                {% if baptism_form.non_field_errors %}
+                  {% for error in baptism_form.non_field_errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                  {% endfor %}
+                {% endif %}
+                
+                {% for field in baptism_form %}
+                <input type="hidden" name="action" value="baptism" />
+                  <div class="mb-3">
+                    {{ field.label_tag }}
+                    {% render_field field class='form-control' %}
+                    <small class="text-danger">{{ field.errors }}</small>
+                  </div>
+                {% endfor %}
+                
+                <div class="mb-3">
+                  <input type="submit" value="Save"  class="btn btn-md btn-outline-primary" />
+                </div>
+                
+              </form>
+            </div>
+          </div>
+          <div id="communion" class="tab-pane fade">
+            <h3>Communion Setting</h3>
+            <div>
+              <form method="post">
+                {% csrf_token %}
+                
+                {% if communion_form.non_field_errors %}
+                  {% for error in communion_form.non_field_errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                  {% endfor %}
+                {% endif %}
+                
+                {% for field in communion_form %}
+                <input type="hidden" name="action" value="communion" />
+                  <div class="mb-3">
+                    {{ field.label_tag }}
+                    {% render_field field class='form-control' %}
+                    <small class="text-danger">{{ field.errors }}</small>
+                  </div>
+                {% endfor %}
+                
+                <div class="mb-3">
+                  <input type="submit" value="Save"  class="btn btn-md btn-outline-primary" />
+                </div>
+                
+              </form>
+            </div>
+          </div>
+          <div id="confirmation" class="tab-pane fade">
+            <h3>Confirmation Setting</h3>
+            <div>
+              <form method="post">
+                {% csrf_token %}
+                
+                {% if confirmation_form.non_field_errors %}
+                  {% for error in confirmation_form.non_field_errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                  {% endfor %}
+                {% endif %}
+                
+                {% for field in confirmation_form %}
+                <input type="hidden" name="action" value="confirmation" />
+                  <div class="mb-3">
+                    {{ field.label_tag }}
+                    {% render_field field class='form-control' %}
+                    <small class="text-danger">{{ field.errors }}</small>
+                  </div>
+                {% endfor %}
+                
+                <div class="mb-3">
+                  <input type="submit" value="Save"  class="btn btn-md btn-outline-primary" />
+                </div>
+                
+              </form>
+            </div>
+          </div>
+          <div id="matrimony" class="tab-pane fade">
+            <h3>Matrimony Setting</h3>
+            <div>
+              <form method="post">
+                {% csrf_token %}
+                
+                {% if matrimony_form.non_field_errors %}
+                  {% for error in matrimony_form.non_field_errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                  {% endfor %}
+                {% endif %}
+                
+                {% for field in matrimony_form %}
+                  <input type="hidden" name="action" value="matrimony" />
+                  <div class="mb-3">
+                    {{ field.label_tag }}
+                    {% render_field field class='form-control' %}
+                    <small class="text-danger">{{ field.errors }}</small>
+                  </div>
+                {% endfor %}
+                
+                <div class="mb-3">
+                  <input type="submit" value="Save"  class="btn btn-md btn-outline-primary" />
+                </div>
+                
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+  $(document).ready(function () {
+    $("#id_created_on").attr('type', 'date');
+
+    $(".setting a").on("click", function (e) {
+      $(".setting li").removeClass('active');
+      e.target.parentElement.classList.add('active');
+    });
+  })
+</script>
+{% endblock script %}
+  

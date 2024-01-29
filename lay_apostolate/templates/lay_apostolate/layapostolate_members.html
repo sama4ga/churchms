@@ -1,0 +1,198 @@
+{% extends 'church/base.html' %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+  <a href="{% url 'lay_apostolate-view' %}">Lay Apostolate</a>
+</li>
+<li class="breadcrumb-item">Members</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1>Lay Apostolate Members List</h1>
+  <div class="my-3">
+    <div class="row border-bottom py-2">
+      <div class="col-4">Lay Apostolate</div>
+      <div class="col-8">{{ lay_apostolate.name }}</div>
+    </div>
+  </div>
+  <div>
+    <a class="btn btn-md btn-primary" style="float:right;" href="{% url 'lay_apostolate-members-add' lay_apostolate.id %}"><i class="fa fa-plus"></i> Add New Lay Apostolate Member</a>
+  </div>
+  <div style="clear:both;"></div><hr />
+  
+  <section>
+    <div class="card mb-4">
+      <a class="filter"><h2 class="card-header"><i class="fa fa-filter"></i> Filter</h2></a>
+      <div class="card-body" id="filter">
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <div>Status</div>
+            <div>
+              <select id="cmbStatus" class="form-control">
+                <option value="">Select one</option>
+              {% for status in statuses %}
+                <option value="{{ status }}">{{ status }}</option>
+              {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3">
+            <label for="chkBaptised">
+              <input type="checkbox" id="chkBaptised" /> Baptised
+            </label>
+          </div>
+          <div class="col-sm-3">
+            <label for="chkCommunicant">
+              <input type="checkbox" id="chkCommunicant" /> Communicant
+            </label>
+          </div>
+          <div class="col-sm-3">
+            <label for="chkConfirmed">
+              <input type="checkbox" id="chkConfirmed" /> Confirmed
+            </label>
+          </div>
+          <div class="col-sm-3">
+            <label for="chkWedded">
+              <input type="checkbox" id="chkWedded" /> Wedded
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="table-responsive">
+    <table class="table table-hover table-striped display w-100 datatable" data-exportTitle="{{ lay_apostolate }} Members">
+      <thead> 
+        <tr>
+          <th style="width:200px !important;">Name</th>
+          <th style="width:200px !important;">Address</th>
+          <th>Phone Number</th>
+          <th>Email</th>
+          <th>DOB</th>
+          <th>Gender</th>
+          <th>Station</th>
+          <th>Organisation</th>
+          <th>Society</th>
+          <th>Baptised</th>
+          <th>Communicant</th>
+          <th>Confirmed</th>
+          <th>Wedded</th>
+          <th>Status</th>
+          <th class="no-export"></th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  $(document).ready(function(){
+  const dt = $('.datatable').DataTable({
+      order: [[0, 'desc']],
+      language: {
+        searchPlaceholder: " Search by name...",
+      },
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: baseurl + '/api/parishioner/datatable/',
+        dataSrc: 'data',
+        "data": function ( d ) {
+          d.lay_apostolate_id = '{{lay_apostolate.id}}';
+          d.status = $("#cmbStatus").val();
+          d.baptised = $("#chkBaptised").is(":checked") ? "True" : "";
+          d.communicant = $("#chkCommunicant").is(":checked") ? "True" : "";
+          d.confirmed = $("#chkConfirmed").is(":checked") ? "True" : "";
+          d.wedded = $("#chkWedded").is(":checked") ? "True" : "";
+          d = __datatable_ajax_callback(d);
+        }
+      },
+      columns: [
+        {
+          data: null,
+          render: function (data, type, row) {
+              return `<div class='d-flex'><img src='${row.passport}' width='50' height='50' class='rounded-circle mr-2' /><span>${row.fullname}</span></div>`;
+          },
+        },
+        { data: 'residential_address', orderable:false, searchable:false },
+        { data: 'phone_number', orderable:false, searchable:false },
+        { data: 'email', orderable:false, searchable:false },
+        { data: 'date_of_birth', orderable:false, searchable:false },
+        { data: 'gender', orderable:false, searchable:false },
+        { data: 'station.name', orderable:false, searchable:false },
+        { data: 'organisation.organisation.short_name', orderable:false, searchable:false },
+        { data: 'working_society.name', orderable:false, searchable:false },
+        { data: 'baptised', orderable:false, searchable:false },
+        { data: 'communicant', orderable:false, searchable:false },
+        { data: 'confirmed', orderable:false, searchable:false },
+        { data: 'wedded', orderable:false, searchable:false },
+        { 
+          data: null,
+          render: function (data, type, row) {
+          str = '';
+          data.layapostolateinfo_set.forEach(societyinfo => {
+            if(societyinfo.lay_apostolate.id == '{{lay_apostolate.id}}'){
+              str += societyinfo.status;
+            }
+          });
+          return str;
+          }, 
+          orderable:false, searchable:false
+        },
+        { 
+          data: null, 
+          render: function (data, type, row) {
+           const detailUrl = "{% url 'parishioner-detail' 0 %}".replace(/0/, row.id.toString());
+           const updateUrl = "{% url 'parishioner-update' 0 %}".replace(/0/, row.id.toString());
+           const removeUrl = "{% url 'lay_apostolate-members-remove' lay_apostolate.id 0 %}".replace(/0/, row.id.toString());
+           
+            return `<div class="d-flex">
+              <a href='${detailUrl}' title="Detail"><i class='fa fa-eye warning p-2 mr-2'></i></a>
+              <a href='${updateUrl}' title="Edit"><i class='fa fa-pencil info p-2 mr-2'></i></a>
+              <a href="${removeUrl}" title="Remove Member"><i class="fa fa-minus danger p-2 mr-2"></i></a>
+              <div class="dropdown">
+                <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Actions
+                </a>
+                <div class="dropdown-menu" aria-labelledby="actions">
+                  <a class="dropdown-item" onclick="updateStatus(${row.id}, 'Active', this)">Mark Active</a>
+                  <a class="dropdown-item" onclick="updateStatus(${row.id}, 'Inactive', this)">Mark Inactive</a>
+                  <a class="dropdown-item" onclick="updateStatus(${row.id}, 'Suspended', this)">Suspend</a>
+                  <a class="dropdown-item" onclick="updateStatus(${row.id}, 'Probation', this)">Probation</a>
+                </div>
+              </div>
+            </div>`;
+          },
+          searchable:false, orderable: false 
+        }
+      ]
+    });
+    
+$("#cmbStatus, #chkWedded, #chkConfirmed, #chkCommunicant, #chkBaptised").on("change", function() {
+    dt.ajax.reload();
+  });
+  
+});
+
+  function updateStatus(id, newStatus, e){
+    const url = "{% url 'lay_apostolate-members-update-status' %}";
+    $.get(url, {'id':id, 'pk':'{{ lay_apostolate.id }}', 'status':newStatus}, (data, status) => {
+      if (status == "success" && data == "success") {
+        $(e).closest("td").prev().html(newStatus);
+        successMsg("Status update successful!");
+      } else {
+        errorMsg("Error while updating status");
+      }
+    });
+  }
+  
+  
+</script>
+{% endblock %}

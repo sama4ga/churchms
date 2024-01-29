@@ -1,0 +1,319 @@
+{% extends 'church/base.html' %}
+{% load widget_tweaks %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+  <a href="{% url 'parishioner-view' %}">Parishioner</a>
+</li>
+<li class="breadcrumb-item">{% if object %}Update{% else %}Create{% endif %}</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1 class="mb-4">Parishioner {% if object %}Update{% else %}Creation{% endif %} Form</h1>
+  <div>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+          <div class="alert alert-danger">{{ error }}</div>
+        {% endfor %}
+      {% endif %}
+      
+      <fieldset class="mb-3">
+        <legend>Personal Details</legend>
+        <div class="row">
+          <div class="col-9">
+            <div class="row">
+              <div class="col-md-2">
+                <div class="mb-3">
+                  {{ form.title.label_tag  }}
+                  {% render_field form.title class="form-control" %}
+                  <small class="error text-danger">{{ form.title.errors }}</small>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  {{ form.surname.label_tag  }}
+                  {% render_field form.surname class="form-control" %}
+                  <small class="error text-danger">{{ form.surname.errors }}</small>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-3">
+                  {{ form.first_name.label_tag  }}
+                  {% render_field form.first_name class="form-control" %}
+                  <small class="error text-danger">{{ form.first_name.errors }}</small>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-3">
+                  {{ form.middle_name.label_tag  }}
+                  {% render_field form.middle_name class="form-control" %}
+                  <small class="error text-danger">{{ form.middle_name.errors }}</small>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.phone_number.label_tag  }}
+                  {% render_field form.phone_number class="form-control" %}
+                  <small class="error text-danger">{{ form.phone_number.errors }}</small>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.email.label_tag  }}
+                  {% render_field form.email class="form-control" %}
+                  <small class="error text-danger">{{ form.email.errors }}</small>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.gender.label_tag  }}
+                  {% render_field form.gender class="form-control" %}
+                  <small class="error text-danger">{{ form.gender.errors }}</small>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.date_of_birth.label_tag  }}
+                  {% render_field form.date_of_birth|attr:"type:date" class="form-control" %}
+                  <small class="error text-danger">{{ form.date_of_birth.errors }}</small>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.state_of_origin.label_tag  }}
+                  {% render_field form.state_of_origin class="form-control" %}
+                  <small class="error text-danger">{{ form.state_of_origin.errors }}</small>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.lga_of_origin.label_tag  }}
+                  {% render_field form.lga_of_origin class="form-control" %}
+                  <small class="error text-danger">{{ form.lga_of_origin.errors }}</small>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.marital_status.label_tag  }}
+                  {% render_field form.marital_status class="form-control" %}
+                  <small class="error text-danger">{{ form.marital_status.errors }}</small>
+                </div>
+              </div>
+              <div id="spouse_name_div" class="col-md-6">
+                <div class="mb-3">
+                  {{ form.spouse_name.label_tag  }}
+                  {% render_field form.spouse_name class="form-control" %}
+                  <small class="error text-danger">{{ form.spouse_name.errors }}</small>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              {{ form.occupation.label_tag }}
+              {% render_field form.occupation class='form-control' %}
+              <small class="error text-danger">{{ form.occupation.errors }}</small>
+            </div>
+            <div class="mb-3">
+              {{ form.residential_address.label_tag }}
+              {% render_field form.residential_address class='form-control' %}
+              <small class="error text-danger">{{ form.residential_address.errors }}</small>
+            </div>
+            <div class="mb-3">
+              {{ form.home_address.label_tag }}
+              {% render_field form.home_address class='form-control' %}
+              <small class="error text-danger">{{ form.home_address.errors }}</small>
+            </div>
+            <div class="mb-3">
+              {{ form.office_address.label_tag }}
+              {% render_field form.office_address class='form-control' %}
+              <small class="error text-danger">{{ form.office_address.errors }}</small>
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="mb-3">
+              <img src="{% if parishioner %}{{parishioner.passport.url}} {% else %}/media/user_default.jfif{% endif %}" alt="passport" id="passport" width="150" height="100" class="mb-3 rounded-circle" />
+              {% render_field form.passport class='form-control' %}
+              <small class="error text-danger">{{ form.passport.errors }}</small>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="mb-3">
+        <legend>Church Details</legend>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              {{ form.diocese_of_origin.label_tag  }}
+              {% render_field form.diocese_of_origin class="form-control" %}
+              <small class="error text-danger">{{ form.diocese_of_origin.errors }}</small>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              {{ form.parish_of_origin.label_tag  }}
+              {% render_field form.parish_of_origin class="form-control" %}
+              <small class="error text-danger">{{ form.parish_of_origin.errors }}</small>
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          {{ form.station.label_tag }}
+          {% render_field form.station class='form-control' %}
+          <small class="error text-danger">{{ form.station.errors }}</small>
+        </div>
+        <div id="organisation_div" class="mb-3">
+          {{ form.organisation.label_tag }}
+          {% if object %}
+            <select name="organisation" id="id_organisation" class="form-control">
+              {% for organisation in organisations %}
+                <option value="{{organisation.id}}" {% if organisation.id == object.organisation_id %}selected{% endif %} >{{organisation.organisation.short_name}}</option>
+              {% endfor %}
+            </select>
+          {% else %}
+            {% render_field form.organisation class='form-control' %}
+          {% endif %}
+          <small class="error text-danger">{{ form.organisation.errors }}</small>
+        </div>
+        <div id="working_society_div" class="mb-3">
+          {{ form.working_society.label_tag }}
+          {% if object %}
+            <select name="working_society" id="id_working_society" class="form-control">
+              {% for society in societies %}
+                <option value="{{society.id}}" {% if society.id == object.working_society_id %}selected{% endif %} >{{society.name}}</option>
+              {% endfor %}
+            </select>
+          {% else %}
+            {% render_field form.working_society class='form-control' %}
+          {% endif %}
+          <small class="error text-danger">{{ form.working_society.errors }}</small>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="mb-3">
+              {{ form.baptised.label_tag }}
+              {% render_field form.baptised class='form-checkbox' %}
+              <small class="error text-danger">{{ form.baptised.errors }}</small>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mb-3">
+              {{ form.communicant.label_tag }}
+              {% render_field form.communicant class='form-checkbox' %}
+              <small class="error text-danger">{{ form.communicant.errors }}</small>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mb-3">
+              {{ form.confirmed.label_tag }}
+              {% render_field form.confirmed class='form-checkbox' %}
+              <small class="error text-danger">{{ form.confirmed.errors }}</small>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mb-3">
+              {{ form.wedded.label_tag }}
+              {% render_field form.wedded class='form-checkbox' %}
+              <small class="error text-danger">{{ form.wedded.errors }}</small>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="mb-3">
+        <legend>Groups</legend>
+        <div class="mb-3">
+          {{ form.pious_society.label_tag }}
+          {% render_field form.pious_society class='form-control' %}
+          <small class="error text-danger">{{ form.pious_society.errors }}</small>
+        </div>
+        <div class="mb-3">
+          {{ form.lay_apostolate.label_tag }}
+          {% render_field form.lay_apostolate class='form-control' %}
+          <small class="error text-danger">{{ form.lay_apostolate.errors }}</small>
+        </div>
+        <div class="mb-3">
+          {{ form.other_group.label_tag }}
+          {% render_field form.other_group class='form-control' %}
+          <small class="error text-danger">{{ form.other_group.errors }}</small>
+        </div>
+      </fieldset>
+      <div class="mb-3">
+          {{ form.charisma.label_tag }}
+          {% render_field form.charisma|attr:"rows:2" class='form-control' %}
+          <small class="error text-danger">{{ form.charisma.errors }}</small>
+        </div>
+      <div class="mb-3">
+        <input type="submit" value="Save"  class="btn btn-md btn-outline-primary float-right" />
+      </div>
+      
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+const passport = document.querySelector("#passport");
+const btnPassport = document.querySelector("#id_passport");
+const station = document.querySelector("#id_station");
+const organisation = document.querySelector("#id_organisation");
+const working_society = document.querySelector("#id_working_society");
+const marital_status = document.querySelector("#id_marital_status");
+
+btnPassport.addEventListener('change', (e) => {
+  passport.src = URL.createObjectURL(btnPassport.files[0]);
+});
+  
+  $('#spouse_name_div').hide();
+  $('#id_marital_status').on('change', () => {
+    if (marital_status.value != 'Single' ){
+      $('#spouse_name_div').show();
+    }else{
+      $('#spouse_name_div').hide();
+    }
+  });
+  
+  {% if not object%}
+    $('#organisation_div').hide();
+    // organisation.prepend("<option value='' selected>Select...</option>");
+    $('#working_society_div').hide();
+  {% endif %}
+  $('#id_station').on('change', () => {
+    $.get("{% url 'get-organisation' %}", {'id':station.value}, (data, status, xhr) => {
+      data = JSON.parse(data);
+      if (status == 'success'){
+        let options = "<option value='' selected>Select...</option>";
+        data.forEach(org => {
+          options += "<option value='"+org.id+"'>"+org.organisation__short_name+"</option>";
+        });
+        $(organisation).html(options);
+        $('#organisation_div').show();
+      }
+    });
+  });
+  
+  organisation.addEventListener('change', () => {
+    $.get("{% url 'get-working_society' %}", {'id':organisation.value}, (data, status, xhr) => {
+      data = JSON.parse(data);
+      if (status == 'success'){
+        let options = "<option value='' selected>Select...</option>";
+        data.forEach(society => {
+          options += "<option value='"+society.id+"'>"+society.name+"</option>";
+        });
+        working_society.innerHTML = options;
+        $('#working_society_div').show();
+      }
+    });
+  });
+</script>
+{% endblock %}

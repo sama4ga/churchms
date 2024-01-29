@@ -1,0 +1,54 @@
+{% extends 'church/base.html' %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">Pious Society</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1>Pious Society List</h1>
+  <div>
+    <a class="btn btn-md btn-primary" style="float:right;" href="{% url 'pious_society-create' %}"><i class="fa fa-plus"></i> Create New Society</a>
+  </div>
+  <div style="clear:both;"></div><hr />
+  
+  <div class="table-responsive">
+    <table class="table table-hover table-striped datatable w-100"  data-exportTitle="Pious Societies List">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Society</th>
+          <th>Slogan</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pious_society in pious_societies %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ pious_society.name }}</td>
+            <td>{{ pious_society.slogan }}</td>
+            <td>{{ pious_society.status }}</td>
+            <td style="text-wrap:nowrap; vertical-align:middle;">
+              <a href="{% url 'pious_society-members' pious_society.id %}" class="warning p-2 mr-2" title="View Members"><i class="fa fa-users"></i></a>
+              <a href="{% url 'pious_society-update' pious_society.id %}" class="info p-2 mr-2" title="Edit"><i class="fa fa-pencil"></i></a>
+              <a data-url="{% url 'pious_society-delete' pious_society.id %}" onclick="confirmDelete(this)" class="danger p-2" title="Delete"><i class="fa fa-times"></i></a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+  $(document).ready(function () {
+    $(".datatable").DataTable();
+  })
+</script>
+{% endblock script %}
+  

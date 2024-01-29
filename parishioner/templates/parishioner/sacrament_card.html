@@ -1,0 +1,190 @@
+{% extends 'church/base.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'plugins/select2/css/select2.min.css' %}"
+{% endblock %}
+
+{% block container %}
+<div class="no-print">
+  <h1 class="mb-3">Sacrament Card</h1>
+  <div class="mx-auto my-3" style="max-width: 500px;">
+    <form method="POST">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="pk">Choose parishioner</label>
+        <select name="pk" id="pk" class="form-control"></select>
+      </div>
+      <div class="mb-3" align='right'>
+        <button type="submit" class="btn btn-md btn-primary">Get</button>
+      </div>
+    </form>
+  </div>
+</div>
+  
+  {% if parishioner %}
+    <button onclick="window.print()" class="btn btn-outline-primary no-print" align='right'><i class="fa fa-print"></i> Print</button>
+    
+    <div class="card p-4">
+      <div class="row">
+        <div class="col-6">
+          <article>
+            <h2>Baptism</h2>
+            <div class="row border-bottom">
+              <div class="col-6">Candidate</div>
+              <div class="col-6">{{parishioner.baptism_set.all.last.candidate}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Sponsor</div>
+              <div class="col-6">{{parishioner.baptism_set.all.last.sponsor}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Minister</div>
+              <div class="col-6">{{parishioner.baptism_set.all.last.minister}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Date</div>
+              <div class="col-6">{{parishioner.baptism_set.all.last.date}}</div>
+            </div>
+          </article>
+          <article>
+            <h2>Communion</h2>
+            <div class="row border-bottom">
+              <div class="col-6">Candidate</div>
+              <div class="col-6">{{parishioner.communion_set.all.last.candidate}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Sponsor</div>
+              <div class="col-6">{{parishioner.communion_set.all.last.sponsor}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Minister</div>
+              <div class="col-6">{{parishioner.communion_set.all.last.minister}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Date</div>
+              <div class="col-6">{{parishioner.communion_set.all.last.date}}</div>
+            </div>
+          </article>
+        </div>
+        <div class="col-6">
+          <article>
+            <h2>Confirmation</h2>
+            <div class="row border-bottom">
+              <div class="col-6">Candidate</div>
+              <div class="col-6">{{parishioner.confirmation_set.all.last.candidate}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Sponsor</div>
+              <div class="col-6">{{parishioner.confirmation_set.all.last.sponsor}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Minister</div>
+              <div class="col-6">{{parishioner.confirmation_set.all.last.minister}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Date</div>
+              <div class="col-6">{{parishioner.confirmation_set.all.last.date}}</div>
+            </div>
+          </article>
+          <article>
+            <h2>Matrimony</h2>
+            <div class="row border-bottom">
+              <div class="col-6">Bride</div>
+              <div class="col-6">{{parishioner.brides.all.last.bride}} {{parishioner.grooms.all.last.bride}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Bride Parent</div>
+              <div class="col-6">{{parishioner.brides.all.last.bride_parent}} {{parishioner.grooms.all.last.bride_parent}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Bride Village</div>
+              <div class="col-6">{{parishioner.brides.all.last.bride_village}} {{parishioner.grooms.all.last.bride_village}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Groom</div>
+              <div class="col-6">{{parishioner.brides.all.last.groom}} {{parishioner.grooms.all.last.groom}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Groom Parent</div>
+              <div class="col-6">{{parishioner.brides.all.last.groom_parent}} {{parishioner.grooms.all.last.groom_parent}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Groom Village</div>
+              <div class="col-6">{{parishioner.brides.all.last.groom_village}} {{parishioner.grooms.all.last.groom_village}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Sponsor</div>
+              <div class="col-6">{{parishioner.brides.all.last.sponsor}} {{parishioner.grooms.all.last.sponsor}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Minister</div>
+              <div class="col-6">{{parishioner.brides.all.last.minister}} {{parishioner.grooms.all.last.minister}}</div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-6">Date</div>
+              <div class="col-6">{{parishioner.brides.all.last.date}} {{parishioner.grooms.all.last.date}}</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'plugins/select2/js/select2.min.js' %}"></script>
+
+<script>
+$(document).ready(function(){
+  
+  $('#pk').select2({
+  ajax: {
+    url: baseurl + "/api/parishioner/datatable",
+    dataType: 'json',
+    delay: 250,
+    data: function (params) {
+      return {
+        'search[value]': params.term,
+        'start': params.page || 0,
+        'length': 30
+      };
+    },
+    processResults: function (data, params) {
+      params.page = params.page || 1;
+
+      return {
+        results: data.data,
+        pagination: {
+          more: (params.page * 30) < data.recordsFiltered
+        }
+      };
+    },
+    cache: true
+  },
+  placeholder: 'Search for a parishioner',
+  minimumInputLength: 2,
+  templateResult: formatResult,
+  templateSelection: formatResultSelection
+});
+
+function formatResult (parishioner) {
+  if (parishioner.loading) {
+    return parishioner.text;
+  }
+
+  var $container = $(
+    `<option>${parishioner.fullname}</option>`
+  );
+  return $container;
+}
+
+function formatResultSelection (parishioner) {
+  return parishioner.fullname || parishioner.text;
+}
+
+$('.select2-selection').css('height', '35px');
+});
+
+</script>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'church/base.html' %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">Communion</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1 class="mb-4">Communion Register</h1>
+  <div align='right' class="mb-3">
+    <a class="btn btn-primary" href="{% url 'communion-create' %}"><i class="fa fa-plus-circle"></i> Add Record</a>
+  </div>
+  
+  <div class="table-responsive">
+    <table class="table table-hover table-striped datatable display" data-exportTitle="Communion Register" style="width:100%;">
+      <thead>
+        <tr>
+          <th style="width:100px !important;">Candidate</th>
+          <th style="width:100px !important;">Minister</th>
+          <th style="width:100px !important;">Sponsor</th>
+          <th>Date</th>
+          <th class="no-export"></th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function(){
+  const dt = $('.datatable').DataTable(
+  {
+      order: [[0, 'desc']],
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: baseurl + '/api/sacrament/communion/datatable/',
+        dataSrc: 'data',
+        //type: 'POST',
+        "data": function ( d ) {
+          d = __datatable_ajax_callback(d);
+        }
+      },
+      columns: [
+        { data: 'candidate' },
+        { data: 'minister' },
+        { data: 'sponsor' },
+        { data: 'date'},
+        { 
+          data: null, 
+          render: function (data, type, row) {
+           const detailUrl = "{% url 'communion-detail' 0 %}".replace(/0/, row.id.toString());
+           const updateUrl = "{% url 'communion-update' 0 %}".replace(/0/, row.id.toString());
+           const deleteUrl = "{% url 'communion-delete' 0 %}".replace(/0/, row.id.toString());
+           
+            return `<div class="d-flex">
+              <a href='${detailUrl}' title="Detail"><i class='fa fa-eye warning p-2 mr-2'></i></a>
+              <a href='${updateUrl}' title="Edit"><i class='fa fa-pencil info p-2 mr-2'></i></a>
+              <i class='fa fa-times p-2 mr-2 danger' onclick="confirmDelete(this)" data-url='${deleteUrl}' title="Delete"></i>
+            </div>`;
+          },
+          searchable:false, orderable: false 
+        }
+      ],
+      createdRow: function( row, data, dataIndex ) { 
+        //console.log(data, dataIndex, row);
+        const candidate = $(row).find('td:eq(0)')[0];
+        const minister = $(row).find('td:eq(1)')[0];
+        candidate.innerHTML = `<a href='${data.candidate}'>${data.candidate_name}</a>`;
+        minister.innerHTML = `<a href='${data.minister}'>${data.minister_name}</a>`;
+      }
+    });
+  
+});
+</script>
+{% endblock %}

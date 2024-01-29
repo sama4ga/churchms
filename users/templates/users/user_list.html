@@ -1,0 +1,94 @@
+{% extends 'church/base.html' %}
+
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">Users</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1>Users List</h1>
+  
+  {% if perms.auth.add_user %}
+    <div class="mb-3 float-right">
+      <a class="btn btn-primary" href="{% url 'users-register' %}"><i class="fa fa-plus-circle"></i> Add New User</a>
+    </div>
+  {% endif %}
+  
+  <div class="table-responsive card card-body">
+    <table class="table table-hover table-striped datatable w-100" data-exportTitle="Users List">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Type</th>
+          <th>Active</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in user_list %}
+          {% if not user.is_superuser %}
+            <tr>
+              <td>{{ forloop.counter0 }}</td>
+              <td>
+                {% if user.profile.passport %}<img src="{{user.profile.passport.url}}"  style="width:70px; height:70px; border-radius:50%;"/> {% endif %} {{user.first_name }} {{ user.last_name }}
+              </td>
+              <td>{{ user.username }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.groups.all.0.name }}</td>
+              <td>{{ user.is_active }}</td>
+              <td style="text-wrap:nowrap; vertical-align:middle;">
+                {% if perms.auth.change_user %}
+                  <a href="{% url 'users-update' user.id %}" class="primary mr-2 p-2"><i class="fa fa-edit" title="Edit"></i></a>
+                {% endif %}
+                {% if user.is_active %}
+                  <i class="fa fa-thumbs-up success mr-2 p-2" title="Disable" onclick="manageUser(this, 'disable')" data-url="{% url 'users-disable' user.id %}"></i>
+                {% else %}
+                  <i class="fa fa-thumbs-down secondary mr-2 p-2" title="Enable" onclick="manageUser(this, 'enable')" data-url="{% url 'users-enable' user.id %}"></i>
+                {% endif %}
+                <i class="fa fa-times danger mr-2 p-2" title="Delete" onclick="confirmDelete(this)" data-url="{% url 'users-delete' user.id %}"></i>
+              </td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+
+<script>
+  $(document).ready(function () {
+    $(".datatable").DataTable();
+  })
+
+  function manageUser(e, type){
+    const url = $(e).attr('data-url');
+    $.get(url, {}, function(data, status, xhr){
+      if(status == 'success' && data == 'success'){
+        successMsg('User successfully ' + type + 'd');
+        if(type == 'enable'){
+          e.title = 'Disable';
+          e.classList.remove('secondary', 'fa-thumbs-down');
+          e.classList.add('success', 'fa-thumbs-up');
+          $(e).attr('onclick', function(i, val){return val.replace('enable', 'disable')});
+          $(e).attr('data-url', function(i, val){return val.replace('enable', 'disable');});
+        }else{
+          e.title = 'Enable';
+          e.classList.remove('success', 'fa-thumbs-up');
+          e.classList.add('secondary', 'fa-thumbs-down');
+          $(e).attr('onclick', function(i, val){return val.replace('disable', 'enable')});
+          $(e).attr('data-url', function(i, val){return val.replace('disable', 'enable');});
+        }
+        $(e).parent().prev().html(type=='enable'?'True':'False');
+      }
+    });
+  }
+</script>
+
+{% endblock %}

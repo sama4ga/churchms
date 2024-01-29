@@ -1,0 +1,50 @@
+{% extends 'church/base.html' %}
+{% load widget_tweaks %}
+
+{% block container %}
+  <h1>Choose Member(s) to add to {{society}}</h1>
+  <form method="post" action="{% url 'working_society-members-add' society.id %}">
+    {% csrf_token %}
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>
+              <input type="checkbox" id="select-all" />
+            </th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for parishioner in parishioners %}
+            <tr>
+              <td>
+                <input type="checkbox" name="ids" value="{{parishioner.id}}" class="form-checkbox" />
+              </td>
+              <td>
+                <a href="{% url 'parishioner-detail' parishioner.id %}" class="" title="View Member Detail">
+                  {{ parishioner.fullname }}
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="my-3">
+      <button type="submit" class="btn btn-primary">Add</button>
+    </div>
+  </form>
+{% endblock %}
+
+{% block script %}
+<script>
+  $('#select-all').on('change', (e) => {
+    if(e.target.checked){
+      $('.form-checkbox').prop('checked', true);
+    }else{
+      $('.form-checkbox').prop('checked', false);
+    }
+  });
+</script>
+{% endblock %}

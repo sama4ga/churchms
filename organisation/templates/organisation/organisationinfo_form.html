@@ -1,0 +1,39 @@
+{% extends 'church/base.html' %}
+{% load widget_tweaks %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+  <a href="{% url 'organisation-view' %}">Organisation</a>
+</li>
+<li class="breadcrumb-item">{% if organisationinfo %} Update {% else %} Create {% endif %}</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1>Organisation - {{ organisationinfo.organisation.short_name }}</h1>
+  <div>
+    <form method="post">
+      {% csrf_token %}
+      
+      {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+          <div class="alert alert-danger">{{ error }}</div>
+        {% endfor %}
+      {% endif %}
+      
+      {% for field  in form %}
+        <div class="mb-3">
+          {{ field.label_tag }}
+          {% render_field field class='form-control' %}
+          <small class="text-danger">{{ field.errors }}</small>
+        </div>
+      {% endfor %}
+      
+      <div class="mb-3">
+        <input type="submit" value="Save"  class="btn btn-md btn-outline-primary float-right" />
+      </div>
+      
+    </form>
+  </div>
+</div>
+{% endblock %}

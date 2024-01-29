@@ -1,0 +1,339 @@
+{% extends 'church/base.html' %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">Deleted Parishioner</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1 class=""> Deleted Parishioner List</h1>
+  
+  <section>
+    <div class="card mb-4">
+      <h2 class="card-header"><i class="fa fa-filter"></i> Filter</h2>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <div>Station</div>
+            <div>
+              <select id="cmbStation" class="form-control">
+                <option value="">Select one</option>
+              {% for station in stations %}
+                <option value="{{ station.id }}">{{ station.name }}</option>
+              {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div>Organisation</div>
+            <div>
+              <select id="cmbOrganisation" class="form-control">
+                <option value="">Select one</option>
+              {% for organisation in organisations %}
+                <option value="{{ organisation.id }}">{{ organisation.short_name }}</option>
+              {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div>Society</div>
+            <div>
+              <select id="cmbSociety"  class="form-control">
+                <option value="">Select one</option>
+              {% for society in societies %}
+                <option value="{{ society.id }}">{{ society }}</option>
+              {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3">
+            <label for="chkBaptised">
+              <input type="checkbox" id="chkBaptised" /> Baptised
+            </label>
+          </div>
+          <div class="col-sm-3">
+            <label for="chkCommunicant">
+              <input type="checkbox" id="chkCommunicant" /> Communicant
+            </label>
+          </div>
+          <div class="col-sm-3">
+            <label for="chkConfirmed">
+              <input type="checkbox" id="chkConfirmed" /> Confirmed
+            </label>
+          </div>
+          <div class="col-sm-3">
+            <label for="chkWedded">
+              <input type="checkbox" id="chkWedded" /> Wedded
+            </label>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </section>
+  
+  <section>
+    <div class="card mb-3">
+      <div class="card-body btn-group">
+        <button class="btn btn-secondary" onclick="clearRegister()"> Permanently Delete</button>
+        <button class="btn btn-outline-secondary" onclick="restoreAll()">Restore All</button>
+      </div>
+    </div>
+  </section>
+  
+  <div class="card card-outline p-3">
+    <div class="table-responsive">
+      <table class="table table-hover table-striped datatable display" id="datatable" data-exportTitle="List of Deleted Parishioners" style="width:100%;">
+        <thead>
+          <tr>
+            <th>
+              <input type="checkbox" id="select-all" />
+            </th>
+            <th style="width:100px !important;">Name</th>
+            <th>Gender</th>
+            <th>DOB</th>
+            <th>Station</th>
+            <th>Organisation</th>
+            <th>Society</th>
+            <th>Baptised</th>
+            <th>Communicant</th>
+            <th>Confirmed</th>
+            <th>Wedded</th>
+            <th>Deleted By</th>
+            <th>Deleted On</th>
+            <th class="no-export"></th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  var dt;
+  $(document).ready(function(){
+  
+    dt = $('.datatable').DataTable({
+      order: [[1, 'desc']],
+      language: {
+        searchPlaceholder: " Search by name...",
+      },
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: baseurl + '/api/parishioner/datatable/',
+        dataSrc: 'data',
+        "data": function ( d ) {
+          d.parishioner = 'True';
+          d.deleted = 'True';
+          d.status = 'Deleted';
+          d.organisation_id = $("#cmbOrganisation").val();
+          d.station_id = $("#cmbStation").val();
+          d.society_id = $("#cmbSociety").val();
+          d.baptised = $("#chkBaptised").is(":checked") ? "True" : "";
+          d.communicant = $("#chkCommunicant").is(":checked") ? "True" : "";
+          d.confirmed = $("#chkConfirmed").is(":checked") ? "True" : "";
+          d.wedded = $("#chkWedded").is(":checked") ? "True" : "";
+          d = __datatable_ajax_callback(d);
+        }
+      },
+      columns: [
+        {
+          data: null,
+          render: function (data, type, row) {
+              return `<input type='checkbox' class='form-checkbox' value='${row.id}' name='ids' />`;
+          }, orderable: false, searchable: false
+        },
+        {
+          data: null,
+          render: function (data, type, row) {
+              return `<div class='d-flex'><img src='${row.passport}' width='50' height='50' class='rounded-circle mr-2' /><span>${row.fullname}</span></div>`;
+          },
+        },
+        { data: 'gender', orderable:false, searchable:false },
+        { data: 'date_of_birth', orderable:false, searchable:false },
+        { data: 'station.name', orderable:false, searchable:false },
+        { data: 'organisation.organisation.short_name', orderable:false, searchable:false },
+        { data: 'working_society.name', orderable:false, searchable:false },
+        { data: 'baptised', orderable:false, searchable:false },
+        { data: 'communicant', orderable:false, searchable:false },
+        { data: 'confirmed', orderable:false, searchable:false },
+        { data: 'wedded', orderable:false, searchable:false },
+        { data: 'deleted_by.username', orderable:false, searchable:false },
+        { data: 'deleted_on', orderable:false, searchable:false },
+        { 
+          data: null, 
+          render: function (data, type, row) {
+           const detailUrl = "{% url 'parishioner-detail' 0 %}".replace(/0/, row.id.toString());
+           const updateUrl = "{% url 'parishioner-update' 0 %}".replace(/0/, row.id.toString());
+           
+            return `<div class="d-flex">
+              <a href='${detailUrl}' title="Detail"><i class='fa fa-eye warning p-2 mr-2'></i></a>
+              <a href='${updateUrl}' title="Edit"><i class='fa fa-pencil info p-2 mr-2'></i></a>
+              <i class='fa fa-times p-2 mr-2 danger' onclick="confirmDelete(${row.id}, this)" title="Delete"></i>
+              <i class='fa fa-user p-2 mr-2 primary' onclick="restore(${row.id}, this)" title="Restore"></i> Restore
+            </div>`;
+          },
+          searchable:false, orderable: false 
+        }
+      ],
+      createdRow: function( row, data, dataIndex ) { 
+        //console.log(data, dataIndex, row);
+        const date = $(row).find('td:eq(12)')[0];
+        date.innerHTML = new Date(Date.parse(date.innerHTML)).toLocaleDateString('en-GB')
+      }
+    });
+    
+    $("#cmbSociety, #cmbStation, #cmbOrganisation, #chkWedded, #chkConfirmed, #chkCommunicant, #chkBaptised").on("change", function() {
+      dt.ajax.reload();
+    });
+  
+    $('#select-all').on('change', (e) => {
+      if(e.target.checked){
+        $('.form-checkbox').prop('checked', true);
+      }else{
+        $('.form-checkbox').prop('checked', false);
+      }
+    });
+  
+   $('#go').on('click', function(){
+    const status = $('#actions').val();
+    let url = '';
+    const ids = document.getElementsByName('ids');
+    console.log(ids); return;
+    if(status == 'Delete'){
+      url = "{% url 'parishioner-update-status' %}";
+      swal({
+        title: "Are you sure? This action is irreversible.",
+        text: "This will delete all associated records.",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          $.get(url, {'ids':ids, 'status':status}, (data, status) => {
+            if (status == "success" && data == "success") {
+              dt.ajax.reload();
+              successMsg("Record(s) successfully deleted!");
+            } else {
+              errorMsg("Error while deleting record(s)");
+            }
+          });
+        }
+      });
+    }else{
+      url = "{% url 'parishioner-update-status'%}";
+    }
+   });
+   
+  });
+  
+  var ref = '';
+  
+  function confirmDelete(id, e) {
+    const url = "{% url 'parishioner-delete-permanently'%}";
+    Swal.fire({
+      title: "Are you sure? This action is irreversible.",
+      text: "This will delete all associated records.",
+      icon: "warning",
+      showCancelButton: true,
+      showCloseButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+      // reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.get(url, {'id':id}, (data, status) => {
+          if (status == "success" && data == "success") {
+            $(e).closest("tr").remove();
+            successMsg("Record successfully deleted!");
+          } else {
+            errorMsg("Error while deleting record");
+          }
+        }).fail(function(data, status, xhr){
+          if(data.status == 403){
+            errorMsg('Access denied');
+          }
+        });
+      } else {
+        // swal("Delete action aborted", { icon: 'error' });
+      }
+    });
+  }
+
+  
+  function restore(id, e){
+    const url = "{% url 'parishioner-restore' %}";
+    $.get(url, {'id':id}, (data, status) => {
+      if (status == "success" && data == "success") {
+        $(e).closest('tr').remove();
+        successMsg("Parishioner successfully restored");
+      } else {
+        errorMsg("Error while restoring parishioner");
+      }
+    }).fail(function(data, status, xhr){
+      if(data.status == 403){
+        errorMsg('Access denied');
+      }
+    });
+  }
+  
+  function restoreAll(){
+    const url = "{% url 'parishioners-restore' %}";
+    $.get(url, {}, (data, status) => {
+      if (status == "success" && data == 'success') {
+        successMsg("Success");
+        dt.ajax.reload();
+      } else {
+        errorMsg("Error");
+      }
+    }).fail(function(data, status, xhr){
+      if(data.status == 403){
+        errorMsg('Access denied');
+      }
+    });
+  }
+  
+  function clearRegister(){
+    const url = "{% url 'parishioners-delete-permanently' %}";
+    Swal.fire({
+      title: "Are you sure? This action is irreversible.",
+      text: "This will permanently delete all associated records.",
+      icon: "warning",
+      buttons: true,
+      showCancelButton: true,
+      showCloseButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+      // reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.get(url, {}, (data, status) => {
+          if (status == "success" && data == 'success') {
+            successMsg("Success");
+            dt.ajax.reload();
+          } else {
+            errorMsg("Error");
+          }
+        }).fail(function(data, status, xhr){
+          if(data.status == 403){
+            errorMsg('Access denied');
+          }
+        });
+      }
+    });
+  }
+  
+</script>
+{% endblock %}
+

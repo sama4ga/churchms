@@ -1,0 +1,54 @@
+{% extends 'church/base.html' %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">Matrimony</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1 class="mb-4">Matrimony Card</h1>
+  
+  <div class="table-responsive">
+    <table class="table display" style="width:100%;">
+      <tbody>
+        <tr>
+          <td>Bride</td>
+          <td>{{matrimony.bride}}</td>
+        </tr>
+        <tr>
+          <td>Bride Parent</td>
+          <td>{{matrimony.bride_parent}}</td>
+        </tr>
+        <tr>
+          <td>Bride Village</td>
+          <td>{{matrimony.bride_village}}</td>
+        </tr>
+        <tr>
+          <td>Groom</td>
+          <td>{{matrimony.groom}}</td>
+        </tr>
+        <tr>
+          <td>Groom Parent</td>
+          <td>{{matrimony.groom_parent}}</td>
+        </tr>
+        <tr>
+          <td>Groom Village</td>
+          <td>{{matrimony.groom_village}}</td>
+        </tr>
+        <tr>
+          <td>Minister</td>
+          <td>{{matrimony.minister}}</td>
+        </tr>
+        <tr>
+          <td>Sponsor</td>
+          <td>{{matrimony.sponsor}}</td>
+        </tr>
+        <tr>
+          <td>Date</td>
+          <td>{{matrimony.date}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

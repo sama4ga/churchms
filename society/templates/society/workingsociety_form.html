@@ -1,0 +1,92 @@
+{% extends 'church/base.html' %}
+{% load widget_tweaks %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+  <a href="{% url 'working_society-view' %}">Society</a>
+</li>
+<li class="breadcrumb-item">{% if object %}Update{% else %}Create{% endif %}</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1>Working Society {% if object %}Update{% else %}Creation{% endif %} Form</h1>
+  <div>
+    <form method="post">
+      {% csrf_token %}
+      
+      {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+          <div class="alert alert-danger">{{ error }}</div>
+        {% endfor %}
+      {% endif %}
+      
+      <div class="mb-3">
+        {{ form.name.label_tag }}
+        {% render_field form.name class='form-control' %}
+        <small class="text-danger error">{{ form.name.errors }}</small>
+       </div>
+      <div class="mb-3">
+        <label for="id_station">Station</label>
+        <select name="station" id="id_station" class="form-control">
+          {% for station in stations %}
+            <option value="{{station.id}}">{{station.name}}</option>
+          {% endfor %}
+        </select>
+       </div>
+      <div class="mb-3" id="organisation_div">
+        {{ form.organisation.label_tag }}
+        {% if object %}
+          <select name="organisation" id="id_organisation" class="form-control">
+            {% for organisation in organisations %}
+              <option value="{{organisation.id}}" {% if org_id == organisation.id %} selected {% endif %}>{{organisation.organisation.short_name}}</option>
+            {% endfor %}
+          </select>
+        {% else %}
+          {% render_field form.organisation class='form-control' %}
+        {% endif %}
+        <small class="text-danger error">{{ form.organisation.errors }}</small>
+       </div>
+   
+      <div class="mb-3">
+        <input type="submit" value="Save"  class="btn btn-md btn-outline-primary" />
+      </div>
+      
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function(){
+  const station = document.querySelector("#id_station");
+  const organisation = document.querySelector("#id_organisation");
+
+  {% if not object %}
+    $('#organisation_div').hide();
+    const option = document.createElement('option');
+    option.value = "";
+    option.text = "Select...";
+    station.prepend(option);
+    station.selectedIndex = 0;
+  {% else %}
+    $('#id_station').val({{object.organisation.station.id}});
+  {% endif %}
+  
+  $('#id_station').on('change', () => {
+    $.get("{% url 'get-organisation' %}", {'id':station.value}, (data, status, xhr) => {
+      data = JSON.parse(data);
+      if (status == 'success'){
+        let options = "<option value='' selected>Select...</option>";
+        data.forEach(org => {
+          options += "<option value='"+org.id+"'>"+org.organisation__short_name+"</option>";
+        });
+        $(organisation).html(options);
+        $('#organisation_div').show();
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

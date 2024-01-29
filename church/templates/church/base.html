@@ -1,0 +1,715 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="edge" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no" />
+  <meta name="author" content="Samaservices" />
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" href="{% static 'plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" integrity="sha512-c42qTSw/wPZ3/5LBzD+Bw5f7bSF2oxou6wEb+I/lqeaKV5FDIfMvvRp772y4jcJLKuGUOpbJMdg/BTl50fJYAw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Toastr -->
+  <link rel="stylesheet" href="{% static 'plugins/toastr/toastr.min.css' %}" />
+  <!-- SweetrAlert -->
+  <link rel="stylesheet" href="{% static 'plugins/sweetalert2/sweetalert2.min.css' %}" />
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css' %}">
+  <link rel="stylesheet" href="{% static 'main.css' %}">
+  {% block style %}{% endblock %}
+  <title>Churchms</title>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+
+{% if user.is_authenticated %}
+
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="{% url 'church-home' %}" class="nav-link">Home</a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="#" class="nav-link">Contact</a>
+      </li>
+    </ul>
+
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      <!-- Navbar Search -->
+      <li class="nav-item">
+        <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+          <i class="fas fa-search"></i>
+        </a>
+        <div class="navbar-search-block">
+          <form class="form-inline">
+            <div class="input-group input-group-sm">
+              <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+              <div class="input-group-append">
+                <button class="btn btn-navbar" type="submit">
+                  <i class="fas fa-search"></i>
+                </button>
+                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </li>
+
+      <!-- Messages Dropdown Menu -->
+      <!-- <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="far fa-comments"></i>
+          <span class="badge badge-danger navbar-badge">3</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <a href="#" class="dropdown-item">
+            <div class="media">
+              <img src="{% static 'dist/img/user1-128x128.jpg' %}" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+              <div class="media-body">
+                <h3 class="dropdown-item-title">
+                  Brad Diesel
+                  <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                </h3>
+                <p class="text-sm">Call me whenever you can...</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+              </div>
+            </div>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item">
+            <div class="media">
+              <img src="{% static 'dist/img/user8-128x128.jpg' %}" alt="User Avatar" class="img-size-50 img-circle mr-3">
+              <div class="media-body">
+                <h3 class="dropdown-item-title">
+                  John Pierce
+                  <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
+                </h3>
+                <p class="text-sm">I got your message bro</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+              </div>
+            </div>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item">
+            <div class="media">
+              <img src="{% static 'dist/img/user3-128x128.jpg' %}" alt="User Avatar" class="img-size-50 img-circle mr-3">
+              <div class="media-body">
+                <h3 class="dropdown-item-title">
+                  Nora Silvester
+                  <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
+                </h3>
+                <p class="text-sm">The subject goes here</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+              </div>
+            </div>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
+        </div>
+      </li> -->
+      <!-- Notifications Dropdown Menu -->
+      <!-- <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="far fa-bell"></i>
+          <span class="badge badge-warning navbar-badge">15</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <span class="dropdown-header">15 Notifications</span>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-envelope mr-2"></i> 4 new messages
+            <span class="float-right text-muted text-sm">3 mins</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-users mr-2"></i> 8 friend requests
+            <span class="float-right text-muted text-sm">12 hours</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-file mr-2"></i> 3 new reports
+            <span class="float-right text-muted text-sm">2 days</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+        </div>
+      </li> -->
+      <li class="nav-item">
+        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+          <i class="fas fa-expand-arrows-alt"></i>
+        </a>
+      </li>
+      <!-- User Profile -->
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <!-- <i class="fa fa-user"></i> -->
+          <img src="{{ user.profile.passport.url }}" alt="{{user.username}}" class="rounded-circle" style="width:20px;height:20px;">
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <div class="dropdown-item d-flex">
+            <img src="{{ user.profile.passport.url }}" alt="{{user.username}}" class="img-circle mr-2" style="width:50px;height: 75px;">
+            <div>
+              {{user.groups.all.0.name}} <br />
+              {{user.first_name}} {{user.last_name}} <br />
+              {{user.username}} ({{user.email}})
+            </div>
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="d-flex text-sm p-2" style="justify-content:space-evenly;">
+            <a href="#" class="dropdown-item">
+              <i class="far fa-user"></i> Profile
+            </a>
+            <a href="{% url 'users-password-change' %}" class="dropdown-item"><i class="fa fa-key"></i> Change Password</a>
+            <a href="{% url 'users-logout' %}" class="dropdown-item"><i class="fa fa-sign-out"></i> Logout</a>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
+          <i class="fas fa-th-large"></i>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-light-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="{% url 'church-home' %}" class="brand-link">
+      <img src="/media/favicon.jfif" alt="Churchms Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">Church Management System</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">      
+
+      <!-- SidebarSearch Form -->
+      <div class="form-inline">
+        <div class="input-group" data-widget="sidebar-search">
+          <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+          <div class="input-group-append">
+            <button class="btn btn-sidebar">
+              <i class="fas fa-search fa-fw"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          <li class="nav-item">
+            <a href="{% url 'church-home' %}" class="nav-link">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                Dashboard
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-building"></i>
+              <p>
+                Stations
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'station-view' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>List Stations</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'station-create' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Create Station</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-sitemap"></i>
+              <p>
+                Organisations
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'organisation-view' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>List Organisations</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'organisation-create' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Create Organisation</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-cubes"></i>
+              <p>
+                Societies
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'working_society-view' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>List Societies</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'working_society-create' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Create Society</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-podcast"></i>
+              <p>
+                Pious Societies
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'pious_society-view' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>List Pious Societies</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'pious_society-create' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Create Pious Society</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-rss"></i>
+              <p>
+                Lay Apostolates
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'lay_apostolate-view' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>List Lay Apostolates</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'lay_apostolate-create' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Create Lay Apostolates</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-server"></i>
+              <p>
+                Other Groups
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'other_group-view' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>List Other Groups</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'other_group-create' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Create Other Groups</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-users"></i>
+              <p>
+                Parishioners
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'parishioner-create' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Register Parishioner</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'parishioner-view' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>List Parishioners</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'parishioner-death-register' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>View Dead Parishioners</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'parishioner-deleted' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>View Deleted Parishioners</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-user-secret"></i>
+              <p>
+                Priests
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'priest-create' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Register Priest</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'priest-view' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>List Priest</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-tree"></i>
+              <p>
+                Councils
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'council-view' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Manage Councils</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'council-head-view' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Heads</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-user"></i>
+              <p>
+                Users
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'users-register' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Add User</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'users-view' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>List Users</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-ship"></i>
+              <p>
+                Sacraments
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'baptism-view' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Baptism</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'communion-view' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Communion</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'confirmation-view' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Confirmation</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'matrimony-view' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Matrimony</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'parishioner-sacrament-card' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Sacrament Card</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'parishioner-marriage-certificate' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Marriage Certificate</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-cogs"></i>
+              <p>
+                Settings
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'setting' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>General Setting</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'setting-groups' %}" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Roles/Permissions</p>
+                </a>
+              </li>
+              <!-- <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Backup/Restore</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Notification</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Languages</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>System Update</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>SMS</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Email</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="fa fa-angle-double-right nav-icon"></i>
+                  <p>Modules</p>
+                </a>
+              </li> -->
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+{% else %}
+<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+  <!-- Left navbar links -->
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item text-primary">
+      <a class="nav-link" href="{%url 'users-login' %}" role="button"><i class="fas fa-sign-in"></i> Login</a>
+    </li>
+  </ul>
+</nav>
+{% endif %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    
+  {% if user.is_authenticated %}
+      
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0"></h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'church-home' %}">Home</a></li>
+              {% block breadcrumb %}
+              {% endblock %}
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+  {% endif %}
+
+    <!-- Main content -->
+    
+    <div class="content">
+      <div class="container-fluid">
+        <main role='main'>
+          <div style="margin-bottom:50px;">
+            {% block container %}{% endblock %}
+          </div>
+        </main>
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+{% if user.is_authenticated %}
+  
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-light">
+    <!-- Control sidebar content goes here -->
+    <div class="p-3">
+      <h5>Title</h5>
+      <p>Sidebar content</p>
+    </div>
+  </aside>
+  <!-- /.control-sidebar -->
+
+{% endif %}
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- To the right -->
+    <div class="float-right d-none d-sm-inline">
+      
+    </div>
+    <!-- Default to the left -->
+    <strong>Copyright &copy; {% now 'Y' %} <a href="#">Samaservices.com</a>.</strong> All rights reserved.
+  </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+
+<!-- jQuery -->
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'dist/js/adminlte.min.js' %}"></script>
+<!-- DataTables -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script>
+<!-- Sweet Alert2 -->
+<!--<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>-->
+<script src="{% static 'plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+<!-- Toastr -->
+<script src="{% static 'plugins/toastr/toastr.min.js' %}"></script>
+<script src="{% static 'main.js' %}"></script>
+
+
+{% if messages %}
+  {% for message in messages %}
+    <script>
+      switch('{{message.tags}}'){
+        case 'success':
+          successMsg('{{message}}');
+          break;
+        case 'error':
+          errorMsg('{{message}}');
+          break;
+        case 'info':
+          infoMsg('{{message}}');
+          break;
+        case 'warning':
+          warningMsg('{{message}}');
+          break;
+      }
+    </script>
+    <!--<div class="alert alert-{{message.tags}}">{{ message }}</div>-->
+  {% endfor %}
+{% endif %}
+
+{% block script %}{% endblock %}
+</body>
+</html>

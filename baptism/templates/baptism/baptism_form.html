@@ -1,0 +1,111 @@
+{% extends 'church/base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'plugins/select2/css/select2.min.css' %}"
+{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+  <a href="{% url 'baptism-view' %}">Baptism</a>
+</li>
+<li class="breadcrumb-item">{% if object %} Create {% else %} Update {% endif %}</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1>Baptism Form</h1>
+  <div>
+    <form method="post">
+      {% csrf_token %}
+      
+      {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+          <div class="alert alert-danger">{{ error }}</div>
+        {% endfor %}
+      {% endif %}
+      
+      {% for field  in form %}
+        <div class="mb-3">
+          {{ field.label_tag }}
+          {% render_field field class='form-control' %}
+          <small class="text-danger">{{ field.errors }}</small>
+        </div>
+      {% endfor %}
+      
+      <div class="mb-3">
+        <input type="submit" value="Save"  class="btn btn-md btn-outline-primary" />
+      </div>
+      
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="{% static 'plugins/select2/js/select2.min.js' %}"></script>
+
+<script>
+$(document).ready(function(){
+
+  $('#id_date').attr('type', 'date');
+    
+  $('#id_minister').parent().before("<div class='mb-3'><label for='id_candidate'>Candidate:</label><select id='id_candidate' name='candidate' class='form-control'></select></div>");
+  
+  $('#id_candidate').select2({
+  ajax: {
+    url: baseurl + "/api/parishioner/datatable",
+    dataType: 'json',
+    delay: 250,
+    data: function (params) {
+      return {
+        'search[value]': params.term,
+        'start': params.page || 0,
+        'length': 30
+      };
+    },
+    processResults: function (data, params) {
+      params.page = params.page || 1;
+
+      return {
+        results: data.data,
+        pagination: {
+          more: (params.page * 30) < data.recordsFiltered
+        }
+      };
+    },
+    cache: true
+  },
+  placeholder: 'Search for a parishioner',
+  minimumInputLength: 2,
+  templateResult: formatResult,
+  templateSelection: formatResultSelection
+});
+
+function formatResult (parishioner) {
+  if (parishioner.loading) {
+    return parishioner.text;
+  }
+
+  var $container = $(
+    `<option>${parishioner.fullname}</option>`
+  );
+  return $container;
+}
+
+function formatResultSelection (parishioner) {
+  return parishioner.fullname || parishioner.text;
+}
+
+{% if baptism %}
+  const value = new Option('{{baptism.groom}}', '{{baptism.groom_id}}', true, true);
+  
+  $('#id_candidate').append(value).trigger('change');
+{% endif %}
+
+$('.select2-selection').css('height', '35px');
+});
+</script>
+{% endblock %}

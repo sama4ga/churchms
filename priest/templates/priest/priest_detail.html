@@ -1,0 +1,54 @@
+{% extends 'church/base.html' %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'priest-view' %}">Priest</a></li>
+<li class="breadcrumb-item">Detail</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1 class="mb-4">Priest Detail</h1>
+  
+  <div class="table-responsive">
+    <table class="table display" style="width:100%;">
+      <tbody>
+        <tr>
+          <td>Name</td>
+          <td>
+            <img src="{{priest.passport.url}}" class="rounded-circle mr-3" style="width: 75px; height: 75px;" />
+            {{priest.name}}
+          </td>
+        </tr>
+        <tr>
+          <td>Type</td>
+          <td>{{priest.get_type_display}}</td>
+        </tr>
+        <tr>
+          <td>Email</td>
+          <td>{{priest.email}}</td>
+        </tr>
+        <tr>
+          <td>Phone Number</td>
+          <td>{{priest.phone_number}}</td>
+        </tr>
+        <tr>
+          <td>Date of birth</td>
+          <td>{{priest.date_of_birth}}</td>
+        </tr>
+        <tr>
+          <td>Date Ordained</td>
+          <td>{{priest.date_ordained}}</td>
+        </tr>
+        <tr>
+          <td>Date Resumed</td>
+          <td>{{priest.date_resumed}}</td>
+        </tr>
+        <tr>
+          <td>Date Transfered</td>
+          <td>{{priest.date_transfered}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

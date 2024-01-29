@@ -1,0 +1,10 @@
+{% extends 'church/base.html' %}
+{% block container %}
+<div>
+  <div class="mx-auto text-center">
+    Error 404 - Not found
+    <br /> {{ request_path }}
+    <br /> {{ exception }}
+  </div>
+</div>
+{% endblock %}

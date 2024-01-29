@@ -1,0 +1,53 @@
+{% extends 'church/base.html' %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+  <a href="{% url 'council-view' %}">Council</a>
+</li>
+<li class="breadcrumb-item">Heads</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1 class="mb-4">List of Council Heads</h1>
+  <div class="mb-3 float-right">
+    <a class="btn btn-primary" href="{% url 'council-head-create' %}"><i class="fa fa-plus-circle"></i> Add Record</a>
+  </div>
+  
+  <div class="table-responsive">
+    <table class="table table-hover datatable display" data-exportTitle="List of Council Head" style="width:100%;">
+      <thead>
+        <tr>
+          <th style="width:300px !important;">Council</th>
+          <th style="width:200px !important;">Head</th>
+          <th style="width:100px !important;">Position</th>
+          <th>Status</th>
+          <th class="no-export"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for head in councilhead_list %}
+          <tr>
+            <td>{{head.council}}</td>
+            <td>{{head.head}}</td>
+            <td>{{head.get_position_display}}</td>
+            <td>{{head.status}}</td>
+            <td class="d-flex">
+              <a href="{% url 'council-head-update' head.id %}" title="Edit"><i class="fa fa-edit p-2"></i></a>
+              <a onclick="confirmDelete(this)" data-url="{% url 'council-head-delete' head.id %}" title="Delete"><i class="fa fa-times text-danger p-2"></i></a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function(){
+  $('.datatable').DataTable();
+});
+</script>
+{% endblock %}

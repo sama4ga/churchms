@@ -1,0 +1,443 @@
+{% extends 'church/base.html' %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">Dead Parishioner</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1 class=""> Dead Parishioner List</h1>
+  
+  <section>
+    <div class="card mb-4">
+      <h2 class="card-header"><i class="fa fa-filter"></i> Filter</h2>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <div>Station</div>
+            <div>
+              <select id="cmbStation" class="form-control">
+                <option value="">Select one</option>
+              {% for station in stations %}
+                <option value="{{ station.id }}">{{ station.name }}</option>
+              {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div>Organisation</div>
+            <div>
+              <select id="cmbOrganisation" class="form-control">
+                <option value="">Select one</option>
+              {% for organisation in organisations %}
+                <option value="{{ organisation.id }}">{{ organisation.short_name }}</option>
+              {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div>Society</div>
+            <div>
+              <select id="cmbSociety"  class="form-control">
+                <option value="">Select one</option>
+              {% for society in societies %}
+                <option value="{{ society.id }}">{{ society }}</option>
+              {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3">
+            <label for="chkBaptised">
+              <input type="checkbox" id="chkBaptised" /> Baptised
+            </label>
+          </div>
+          <div class="col-sm-3">
+            <label for="chkCommunicant">
+              <input type="checkbox" id="chkCommunicant" /> Communicant
+            </label>
+          </div>
+          <div class="col-sm-3">
+            <label for="chkConfirmed">
+              <input type="checkbox" id="chkConfirmed" /> Confirmed
+            </label>
+          </div>
+          <div class="col-sm-3">
+            <label for="chkWedded">
+              <input type="checkbox" id="chkWedded" /> Wedded
+            </label>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </section>
+  
+  <section>
+    <div class="card mb-3">
+      <div class="card-body btn-group">
+        <button class="btn btn-secondary" onclick="clearRegister()">Clear Register</button>
+        <button class="btn btn-outline-secondary" onclick="markAllAlive()">Mark all Alive</button>
+      </div>
+    </div>
+  </section>
+  
+  <div class="card card-outline p-3">
+    <div class="table-responsive">
+      <table class="table table-hover table-striped datatable display" id="datatable" data-exportTitle="List of Dead Parishioners" style="width:100%;">
+        <thead>
+          <tr>
+            <th>
+              <input type="checkbox" id="select-all" />
+            </th>
+            <th style="width:100px !important;">Name</th>
+            <th>Gender</th>
+            <th>DOB</th>
+            <th>Died on</th>
+            <th>Buried on</th>
+            <th>Buried by</th>
+            <th>Buried at</th>
+            <th>Station</th>
+            <th>Organisation</th>
+            <th>Society</th>
+            <th>Baptised</th>
+            <th>Communicant</th>
+            <th>Confirmed</th>
+            <th>Wedded</th>
+            <th class="no-export"></th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+
+<div class="modal fade" id="death_details" tabindex="-1" role="dialog" aria-labelledby="title" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="title">Update Death Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <input type="hidden" value="" id="member_id"/>
+          <label for="died_on">Date Died</label>
+          <input type="date" name='died_on' id="died_on" class="form-control" />
+        </div>
+        <div class="mb-3">
+          <label for="died_on">Date Buried</label>
+          <input type="date" name='buried_on' id="buried_on" class="form-control" />
+        </div>
+        <div class="mb-3">
+          <label for="buried_by">Buried By</label>
+          <input type="text" name='buried_by' id="buried_by" class="form-control" />
+        </div>
+        <div class="mb-3">
+          <label for="buried_on">Buried At</label>
+          <input type="text" name='buried_at' id="buried_at" class="form-control" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="setDeathDetail()"> Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  var dt;
+  $(document).ready(function(){
+  
+    dt = $('.datatable').DataTable({
+      order: [[1, 'desc']],
+      language: {
+        searchPlaceholder: " Search by name...",
+      },
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: baseurl + '/api/parishioner/datatable/',
+        dataSrc: 'data',
+        //type: 'POST',
+        "data": function ( d ) {
+          d.parishioner = 'True';
+          d.dead = 'True';
+          d.status = 'Dead';
+          d.organisation_id = $("#cmbOrganisation").val();
+          d.station_id = $("#cmbStation").val();
+          d.society_id = $("#cmbSociety").val();
+          d.baptised = $("#chkBaptised").is(":checked") ? "True" : "";
+          d.communicant = $("#chkCommunicant").is(":checked") ? "True" : "";
+          d.confirmed = $("#chkConfirmed").is(":checked") ? "True" : "";
+          d.wedded = $("#chkWedded").is(":checked") ? "True" : "";
+          d = __datatable_ajax_callback(d);
+        }
+      },
+      columns: [
+        {
+          data: null,
+          render: function (data, type, row) {
+              return `<input type='checkbox' class='form-checkbox' value='${row.id}' name='ids' />`;
+          }, orderable: false, searchable: false
+        },
+        {
+          data: null,
+          render: function (data, type, row) {
+              return `<div class='d-flex'><img src='${row.passport}' width='50' height='50' class='rounded-circle mr-2' /><span>${row.fullname}</span></div>`;
+          },
+        },
+        { data: 'gender', orderable:false, searchable:false },
+        { data: 'date_of_birth', orderable:false, searchable:false },
+        { data: 'death_detail.0.died_on', orderable:false, searchable:false },
+        { data: 'death_detail.0.buried_on', orderable:false, searchable:false },
+        { data: 'death_detail.0.buried_by', orderable:false, searchable:false },
+        { data: 'death_detail.0.buried_at', orderable:false, searchable:false },
+        { data: 'station.name', orderable:false, searchable:false },
+        { data: 'organisation.organisation.short_name', orderable:false, searchable:false },
+        { data: 'working_society.name', orderable:false, searchable:false },
+        { data: 'baptised', orderable:false, searchable:false },
+        { data: 'communicant', orderable:false, searchable:false },
+        { data: 'confirmed', orderable:false, searchable:false },
+        { data: 'wedded', orderable:false, searchable:false },
+        { 
+          data: null, 
+          render: function (data, type, row) {
+           const detailUrl = "{% url 'parishioner-detail' 0 %}".replace(/0/, row.id.toString());
+           const updateUrl = "{% url 'parishioner-update' 0 %}".replace(/0/, row.id.toString());
+           const deleteUrl = "{% url 'parishioner-delete' 0 %}".replace(/0/, row.id.toString());
+           
+            return `<div class="d-flex">
+              <a href='${detailUrl}' title="Detail"><i class='fa fa-eye warning p-2 mr-2'></i></a>
+              <a href='${updateUrl}' title="Edit"><i class='fa fa-pencil info p-2 mr-2'></i></a>
+              <i class='fa fa-times p-2 mr-2 danger' onclick="confirmDelete(${row.id}, this)" title="Delete"></i>
+              <i class='fa fa-user p-2 mr-2 primary' onclick="markAlive(${row.id}, this)" title="Mark Alive"></i> Mark Alive
+              <i class='fa fa-user p-2 mr-2 secondary' onclick="updateDeathDetail(${row.id}, this)" title="Update Death Detail"></i> Update Death Detail
+            </div>`;
+          },
+          searchable:false, orderable: false 
+        }
+      ]
+    });
+    
+    $("#cmbSociety, #cmbStation, #cmbOrganisation, #chkWedded, #chkConfirmed, #chkCommunicant, #chkBaptised").on("change", function() {
+      dt.ajax.reload();
+    });
+  
+    $('#select-all').on('change', (e) => {
+      if(e.target.checked){
+        $('.form-checkbox').prop('checked', true);
+      }else{
+        $('.form-checkbox').prop('checked', false);
+      }
+    });
+  
+   $('#go').on('click', function(){
+    const status = $('#actions').val();
+    let url = '';
+    const ids = document.getElementsByName('ids');
+    console.log(ids); return;
+    if(status == 'Delete'){
+      url = "{% url 'parishioner-update-status' %}";
+      Swal.fire({
+        title: "Are you sure? This action is irreversible.",
+        text: "This will delete all associated records.",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          $.get(url, {'ids':ids, 'status':status}, (data, status) => {
+            if (status == "success" && data == "success") {
+              dt.ajax.reload();
+              successMsg("Record(s) successfully deleted!");
+            } else {
+              errorMsg("Error while deleting record(s)");
+            }
+          });
+        }
+      });
+    }else{
+      url = "{% url 'parishioner-update-status'%}";
+    }
+   });
+   
+  });
+  
+  var ref = '';
+  
+  function confirmDelete(id, e) {
+    const url = "{% url 'parishioner-delete-dead'%}";
+    Swal.fire({
+      title: "Are you sure? This action is irreversible.",
+      text: "This will delete all associated records.",
+      icon: "warning",
+      showCancelButton: true,
+      showCloseButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+      // reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.get(url, {'id':id}, (data, status, xhr) => {
+          if (status == "success" && data == "success") {
+            $(e).closest("tr").remove();
+            successMsg("Record successfully deleted!");
+          } else {
+            errorMsg("Error while deleting record");
+          }
+        }).fail(function(data, status, xhr){
+          console.log('fail', data, status, xhr);
+          if(data.status == 403){
+            errorMsg('Access denied');
+          }
+        });
+      } else {
+        // swal("Delete action aborted", { icon: 'error' });
+      }
+    });
+  }
+
+  
+  function markAlive(id, e){
+    const url = "{% url 'parishioner-mark-alive'%}";
+    $.get(url, {'id':id}, (data, status, xhr) => {
+      if (status == "success" && data == "success") {
+        $(e).closest('tr').remove();
+        successMsg("Parishioner successfully marked as alive");
+      } else {
+        errorMsg("Error while marking parishioner as alive");
+      }
+    }).fail(function(data, status, xhr){
+      console.log('fail', data, status, xhr);
+      if(data.status == 403){
+        errorMsg('Access denied');
+      }
+    });
+  }
+  
+  function updateDeathDetail(id, e){
+    const url = "{% url 'parishioner-get-death-detail' %}";
+    $.get(url, {'parishioner_id':id}, (data, status, xhr) => {
+      if (status == "success") {
+      // data = data[0].fields;
+        data = JSON.parse(data)[0];
+        $('#died_on').val(data.died_on);
+        $('#buried_on').val(data.buried_on);
+        $('#buried_at').val(data.buried_at);
+        $('#buried_by').val(data.buried_by);
+        $('#member_id').val(id);
+        ref = e;
+        $('#death_details').modal('show')
+      } else {
+        errorMsg("Error while fetching death detail");
+      }
+    });
+  }
+  
+  function setDeathDetail(){
+    const id = $('#member_id').val();
+    const died_on = $('#died_on').val();
+    const buried_on = $('#buried_on').val();
+    const buried_at = $('#buried_at').val();
+    const buried_by = $('#buried_by').val();
+    const url = "{% url 'parishioner-update-death-detail' %}";
+    $.get(url, {'parishioner_id':id, 'died_on':died_on, 'buried_on':buried_on, 'buried_at':buried_at, 'buried_by':buried_by}, 
+    (data, status, xhr) => {
+      console.log('func', data, status, xhr);
+      if (status == "success" && data == "success") {
+        successMsg("Death detail successfully updated");
+      } else {
+        errorMsg("Error while updating death detail");
+      }
+    }).done(function(){
+    //}).abort(function(e){
+    //  console.log('abort', e);
+    //}).catch(function(e){
+    //  console.log('catch', e);
+    }).fail(function(data, status, xhr){
+      console.log('fail', data, status, xhr);
+      if(data.status == 403){
+        errorMsg('Access denied');
+      }
+    }).always(function(){
+      $('#death_details').modal('hide');
+      $('#died_on').val('');
+      $('#buried_on').val('');
+      $('#buried_at').val('');
+      $('#buried_by').val('');
+    });
+  }
+  
+//  $.ajax({
+    //...        
+//    success: function(data, textStatus, xhr) {
+//        console.log(xhr.status);
+//    },
+//    complete: function(xhr, textStatus) {
+//        console.log(xhr.status);
+//    } 
+//});
+  
+  function markAllAlive(){
+    const url = "{% url 'parishioners-remove-dead' %}";
+    $.get(url, {}, (data, status, xhr) => {
+      if (status == "success" && data == 'success') {
+        successMsg("Success");
+        dt.ajax.reload();
+      } else {
+        errorMsg("Error");
+      }
+    }).fail(function(data, status, xhr){
+      console.log('fail', data, status, xhr);
+      if(data.status == 403){
+        errorMsg('Access denied');
+      }
+    });
+  }
+  
+  function clearRegister(){
+    const url = "{% url 'parishioners-delete-dead' %}";
+    Swal.fire({
+      title: "Are you sure? This action is irreversible.",
+      text: "This will permanently delete all associated records.",
+      icon: "warning",
+      showCancelButton: true,
+      showCloseButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+      // reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.get(url, {}, (data, status, xhr) => {
+          if (status == "success" && data == 'success') {
+            successMsg("Success");
+            dt.ajax.reload();
+          } else {
+            errorMsg("Error");
+          }
+        }).fail(function(data, status, xhr){
+          console.log('fail', data, status, xhr);
+          if(data.status == 403){
+            errorMsg('Access denied');
+          }
+        });
+      }
+    });
+  }
+  
+</script>
+{% endblock %}
+

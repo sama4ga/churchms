@@ -1,0 +1,90 @@
+{% extends 'church/base.html' %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">Matrimony</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1 class="mb-4">Matrimony Register</h1>
+  <div align='right' class="mb-3">
+    <a class="btn btn-primary" href="{% url 'matrimony-create' %}"><i class="fa fa-plus-circle"></i> Add Record</a>
+  </div>
+  
+  <div class="table-responsive">
+    <table class="table table-hover table-striped datatable display" data-exportTitle="Matrimony Register" style="width:100%;">
+      <thead>
+        <tr>
+          <th style="width:100px !important;">Bride</th>
+          <th style="width:100px !important;">Bride Parent</th>
+          <th style="width:100px !important;">Bride Village</th>
+          <th style="width:100px !important;">Groom</th>
+          <th style="width:100px !important;">Groom Parent</th>
+          <th style="width:100px !important;">Groom Village</th>
+          <th style="width:100px !important;">Sponsor</th>
+          <th style="width:100px !important;">Minister</th>
+          <th>Date</th>
+          <th class="no-export"></th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function(){
+  const dt = $('.datatable').DataTable(
+  {
+      order: [[0, 'desc']],
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: baseurl + '/api/sacrament/matrimony/datatable/',
+        dataSrc: 'data',
+        //type: 'POST',
+        "data": function ( d ) {
+          d = __datatable_ajax_callback(d);
+        }
+      },
+      columns: [
+        { data: 'bride' },
+        { data: 'bride_parent' },
+        { data: 'bride_village' },
+        { data: 'groom' },
+        { data: 'groom_parent' },
+        { data: 'groom_village' },
+        { data: 'sponsor' },
+        { data: 'minister' },
+        { data: 'date'},
+        { 
+          data: null, 
+          render: function (data, type, row) {
+           const detailUrl = "{% url 'matrimony-detail' 0 %}".replace(/0/, row.id.toString());
+           const updateUrl = "{% url 'matrimony-update' 0 %}".replace(/0/, row.id.toString());
+           const deleteUrl = "{% url 'matrimony-delete' 0 %}".replace(/0/, row.id.toString());
+           
+            return `<div class="d-flex">
+              <a href='${detailUrl}' title="Detail"><i class='fa fa-eye warning p-2 mr-2'></i></a>
+              <a href='${updateUrl}' title="Edit"><i class='fa fa-pencil info p-2 mr-2'></i></a>
+              <i class='fa fa-times p-2 mr-2 danger' onclick="confirmDelete(this)" data-url='${deleteUrl}' title="Delete"></i>
+            </div>`;
+          },
+          searchable:false, orderable: false 
+        }
+      ],
+      createdRow: function( row, data, dataIndex ) { 
+        //console.log(data, dataIndex, row);
+        const bride = $(row).find('td:eq(0)')[0];
+        const groom = $(row).find('td:eq(3)')[0];
+        const minister = $(row).find('td:eq(7)')[0];
+        bride.innerHTML = `<a href='${data.bride}'>${data.bride_name}</a>`;
+        groom.innerHTML = `<a href='${data.groom}'>${data.groom_name}</a>`;
+        minister.innerHTML = `<a href='${data.minister}'>${data.minister_name}</a>`;
+      }
+    });
+  
+});
+</script>
+{% endblock %}

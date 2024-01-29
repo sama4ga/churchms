@@ -1,0 +1,57 @@
+{% extends 'church/base.html' %}
+{% load widget_tweaks %}
+{% load custom_templatetags %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'setting-groups' %}">Groups</a></li>
+<li class="breadcrumb-item">Permissions</li>
+{% endblock %}
+
+{% block container %}
+
+<h1>{{group.name|capfirst}} Permissions</h1>
+<div class="table-responsive">
+  <form method="POST">
+    {% csrf_token %}
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Module</th>
+          <th>Model</th>
+          <th>Add</th>
+          <th>Change</th>
+          <th>Delete</th>
+          <th>View</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% regroup permissions by content_type.model as permission_group %}
+          {% for permission in permission_group %}
+          <tr>
+            {% ifchanged permission.list.0.content_type.app_label %}
+              <td>{{ permission.list.0.content_type.app_label|replace:"_, "|title }}</td>
+            {% else %}
+              <td></td>
+            {% endifchanged %}
+            <td>{{ permission.list.0.content_type.name|title }}</td> <!-- grouper -->
+            {% for detail in permission.list %}
+              <td>
+              {% if detail in group.permissions.all %}
+                <input type="checkbox" name="permissions" value="{{detail.content_type.app_label}}.{{detail.codename}}" checked />
+                {% else %}
+                <input type="checkbox" name="permissions" value="{{detail.content_type.app_label}}.{{detail.codename}}" />
+              {% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+    <div align='right'>
+      <button type="submit" class="btn btn-outline-primary"><i class="fa fa-paper-plane"></i> Save</button>
+    </div>
+  </form>
+</div>
+  
+
+{% endblock %}

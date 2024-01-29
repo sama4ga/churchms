@@ -1,0 +1,152 @@
+a {
+  text-decoration: none;
+}
+fieldset {
+  border: 1px solid rgba(0,0,0,0.1);
+  padding: 10px;
+  border-radius: 5px;
+}
+legend {
+  float: unset;
+  width: initial;
+  padding: 5px;
+}
+
+.dropdown-menu-lg .dropdown-item{
+  padding: 0.5rem;
+}
+
+footer {
+  margin-top: 100px;
+  padding: 50px;
+  background: #c1c1c1;
+}
+
+.progress-minibar{
+  height: 10px;
+  border-radius: 5px;
+}
+
+.progress-bar-green{
+  background-color: var(--green);
+}
+
+.error {
+  list-style: none;
+}
+.info {
+  border-radius: 3px;
+  background-color: #cff4fc;
+  border: 1px solid #9eeaf9;
+  color: #055160;
+}
+.danger {
+  border-radius: 3px;
+  background-color: #f8d7da;
+  border: 1px solid #f1aeb5;
+  color: #58151c;
+}
+.success {
+  border-radius: 3px;
+  background-color: #d1e7dd;
+  border: 1px solid #a3cfbb;
+  color: #0a3622;
+}
+.warning {
+  border-radius: 3px;
+  background-color: #fff3cd;
+  border: 1px solid #ffe69c;
+  color: #664d03;
+}
+
+.dataTables_wrapper .top {
+  display: flex;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.nav-treeview > .nav-item {
+  margin-left: 20px;
+}
+
+.setting li.active{
+  background-color: rgba(0,0,0,0.1);
+}
+
+.certificate {
+  background-color: #fff;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 10px;
+  padding: 50px 40px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  max-width: 800px;
+}
+.certificate .header {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.certificate .header img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+
+.certificate .header .church-name {
+  font-weight: bold;
+  font-family: 'Comic Sans MS';
+}
+
+.certificate .header .church-address {
+  font-style: italic;
+  font-family: 'Sans-Serif';
+}
+
+.certificate .body div {
+  margin: 10px 0;
+}
+
+.certificate .body .title {
+  font-weight: bold;
+  font-family: Tahoma;
+  padding: 10px 0;
+  color: #f00;
+}
+
+.certificate .body .accord {
+  font-weight: bold;
+  font-family: Tahoma;
+  padding-bottom: 10px;
+  color: #006;
+}
+
+.certificate .body .desc {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+@media screen and (min-width:768px) {
+  .certificate {
+    font-size: 1.5rem;
+  }
+  .certificate .header img {
+    width: 150px;
+    height: 150px;
+  }
+
+  .certificate .header .church-name {
+    font-size: 2em;
+  }
+
+  .certificate .body .title {
+    font-size: 2em;
+  }
+
+}
+
+@media print {
+  .no-print {
+    display: none;
+  }
+}

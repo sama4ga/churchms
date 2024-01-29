@@ -1,0 +1,49 @@
+{% extends 'church/base.html' %}
+{% block container %}
+<div>
+  <h1>Lay Apostolate List</h1>
+  <div>
+    <a class="btn btn-md btn-primary" style="float:right;" href="{% url 'lay_apostolate-create' %}"><i class="fa fa-plus"></i> Create New Lay Apostolate</a>
+  </div>
+  <div style="clear:both;"></div><hr />
+  
+  <div class="table-responsive">
+    <table class="table table-hover table-striped datatable w-100" data-exportTitle="Lay Apostolate List">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Society</th>
+          <th>Short Name</th>
+          <th>Slogan</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lay_apostolate in lay_apostolates %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ lay_apostolate.name }}</td>
+            <td>{{ lay_apostolate.short_name }}</td>
+            <td>{{ lay_apostolate.slogan }}</td>
+            <td style="text-wrap:nowrap; vertical-align:middle;">
+              <a href="{% url 'lay_apostolate-members' lay_apostolate.id %}" class="warning p-2 mr-2" title="View Members"><i class="fa fa-users"></i></a>
+              <a href="{% url 'lay_apostolate-update' lay_apostolate.id %}" class="info p-2 mr-2" title="Edit"><i class="fa fa-pencil"></i></a>
+              <a data-url="{% url 'lay_apostolate-delete' lay_apostolate.id %}" href="#" onclick="confirmDelete(this)" class="danger p-2" title="Delete"><i class="fa fa-times"></i></a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+  $(document).ready(function () {
+    $(".datatable").DataTable();
+  })
+</script>
+{% endblock script %}
+  

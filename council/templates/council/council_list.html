@@ -1,0 +1,57 @@
+{% extends 'church/base.html' %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">Council</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1 class="mb-4">Council List</h1>
+  <div class="mb-3 float-right">
+    <a class="btn btn-primary" href="{% url 'council-create' %}"><i class="fa fa-plus-circle"></i> Add Record</a>
+  </div>
+  
+  <div class="table-responsive">
+    <table class="table table-hover datatable display" data-exportTitle="Council List" style="width:100%;">
+      <thead>
+        <tr>
+          <th style="width:100px !important;">Name</th>
+          <th style="width:200px !important;">Station</th>
+          <th style="width:100px !important;">Status</th>
+          <th class="no-export"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for council in council_list %}
+          <tr>
+            {% ifchanged %}
+              <td rowspan="{{council.stations.all.count|add:'1'}}">
+                {{council.name}}
+                <a href="{% url 'council-update' council.id %}" title="Edit"><i class="fa fa-edit p-2"></i></a>
+                <a onclick="confirmDelete(this)" data-url="{% url 'council-delete' council.id %}" title="Delete Council"><i class="fa fa-times text-danger p-2"></i></a>
+              </td>
+            {% endifchanged %}
+            {% for sc in council.stations.all %}
+            <tr>
+              <td>{{sc.station}}</td>
+              <td>{{sc.status}}</td>
+              <td>
+                <a onclick="confirmDelete(this)" data-url="{% url 'council-remove-station' council.id sc.station.id %}" title="Remove Station"><i class="fa fa-minus-circle text-danger p-2"></i></a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function(){
+  //$('.datatable').DataTable();
+});
+</script>
+{% endblock %}

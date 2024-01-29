@@ -1,0 +1,50 @@
+{% extends 'church/base.html' %}
+{% load widget_tweaks %}
+
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+  <a href="{% url 'users-view' %}">Users</a>
+</li>
+<li class="breadcrumb-item">Create</li>
+{% endblock %}
+
+{% block container %}
+<div style="max-width:400px; min-width:100px;" class="mx-auto p-4 my-4 card">
+  <h1 class="card-header bg-white">User {% if object %} Update {% else %} Register {% endif %}</h1>
+  <div class="card-body">
+    <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">{{ error }}</div>
+      {% endfor %}
+    {% endif %}
+    
+    {% for field in form %}
+      <div class='mb-3'>
+        {{ field.label_tag }}
+        {% render_field field class='form-control' %}
+        <small class="text-danger">{{ field.errors }}</small>
+      </div>
+    {% endfor %}
+    
+    <!--  {% render_field form.password|attr:"type:password" class='form-control' %}-->
+    
+    <div class="mb-3">
+      <input type="submit" value="Save" class="btn btn-md btn-outline-primary form-control" />
+    </div>
+  </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function(){
+  {% if object %}
+    $('#id_group').val('{{object.groups.all.0.id}}');
+  {% endif %}
+})
+</script>
+{% endblock %}

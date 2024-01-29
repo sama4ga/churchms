@@ -1,0 +1,173 @@
+{% extends 'church/base.html' %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+  <a href="{% url 'parishioner-view' %}">Parishioner</a>
+</li>
+<li class="breadcrumb-item">Detail</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <div class="no-print">
+    <button onclick="window.print();" class="float-righ btn btn-primary">Print</button>
+    <a href="{% url 'parishioner-update' parishioner.id %}" class="float-right btn btn-info">Edit</a>
+  </div>
+  <h1>Parishioner Detail</h1>
+  <div>
+    <div class="row">
+      <div class="col-6">Name</div>
+      <div class="col-6">{{ parishioner.fullname }}</div>
+    </div>
+    <div class="row">
+      <div class="col-6">Gender</div>
+      <div class="col-6">{{ parishioner.gender }}</div>
+    </div>
+    <div class="row">
+      <div class="col-6">Date of Birth</div>
+      <div class="col-6">{{ parishioner.date_of_birth }}</div>
+    </div>
+    <div class="row">
+      <div class="col-6">Phone number</div>
+      <div class="col-6">{{ parishioner.phone_number }}</div>
+    </div>
+    <div class="row">
+      <div class="col-6">Email</div>
+      <div class="col-6">{{ parishioner.email }}</div>
+    </div>
+    <div class="row">
+      <div class="col-6">Station</div>
+      <div class="col-6">{{ parishioner.station.name }} ({{ parishioner.station_status }})</div>
+    </div>
+    <div class="row">
+      <div class="col-6">Organisation</div>
+      <div class="col-6">{{ parishioner.organisation.organisation.short_name }} ({{ parishioner.organisation_status }})</div>
+    </div>
+    <div class="row">
+      <div class="col-6">Working Society</div>
+      <div class="col-6">{{ parishioner.working_society.name }} ({{ parishioner.working_society_status }})</div>
+    </div>
+    <div class="row">
+      <div class="col-6">Diocese of Origin</div>
+      <div class="col-6">{{ parishioner.diocese_of_origin }}</div>
+    </div>
+    <div class="row">
+      <div class="col-6">Parish of Origin</div>
+      <div class="col-6">{{ parishioner.parish_of_origin }}</div>
+    </div>
+    <div class="row">
+      <div class="col-6">State of Origin</div>
+      <div class="col-6">{{ parishioner.state_of_origin }}</div>
+    </div>
+    <div class="row">
+      <div class="col-6">LGA of Origin</div>
+      <div class="col-6">{{ parishioner.lga_of_origin }}</div>
+    </div>
+    <div class="row">
+      <div class="col-6">Residential Address</div>
+      <div class="col-6">{{ parishioner.residential_address }}</div>
+    </div>
+    <div class="row">
+      <div class="col-6">Home Address</div>
+      <div class="col-6">{{ parishioner.home_address }}</div>
+    </div>
+    <div class="row">
+      <div class="col-6">Office Address</div>
+      <div class="col-6">{{ parishioner.office_address }}</div>
+    </div>
+    <div class="row">
+      <div class="col-6">Occupation</div>
+      <div class="col-6">{{ parishioner.occupation }}</div>
+    </div>
+    <div class="row">
+      <div class="col-6">Marital Status</div>
+      <div class="col-6">{{ parishioner.marital_status }}</div>
+    </div>
+    {% if parishioner.marital_status != 'Single' %}
+      <div class="row">
+        <div class="col-6">Spouse Name</div>
+        <div class="col-6">{{ parishioner.spouse_name }}</div>
+    </div>
+    {% endif %}
+    <div class="row border-top">
+      <div class="col-6">Pious Societies</div>
+      <div class="col-6">
+        <ul>
+        {% for societyinfo in parishioner.pioussocietyinfo_set.all %}
+          <li>{{societyinfo.pious_society.name}} ({{ societyinfo.status }})</li>
+        {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="row border-top">
+      <div class="col-6">Lay Apostolates</div>
+      <div class="col-6">
+        <ul>
+        {% for societyinfo in parishioner.layapostolateinfo_set.all %}
+          <li>{{societyinfo.lay_apostolate.name}} ({{ societyinfo.status }})</li>
+        {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="row border-top border-bottom">
+      <div class="col-6">Other Groups</div>
+      <div class="col-6">
+        <ul>
+        {% for societyinfo in parishioner.othergroupinfo_set.all %}
+          <li>{{societyinfo.other_group.name}} ({{ societyinfo.status }})</li>
+        {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6">Status</div>
+      <div class="col-6">
+        {{ parishioner.status }}
+      </div>
+    </div>
+    {% if parishioner.status == 'Dead' %}
+      <div class="row">
+        <div class="col-6">Died on</div>
+        <div class="col-6">{{ parishioner.death_detail.all.0.died_on }}</div>
+      </div>
+      <div class="row">
+        <div class="col-6">Buried on</div>
+        <div class="col-6">{{ parishioner.death_detail.all.0.buried_on }}</div>
+      </div>
+      <div class="row">
+        <div class="col-6">Buried at</div>
+        <div class="col-6">{{ parishioner.death_detail.all.0.buried_at }}</div>
+      </div>
+      <div class="row">
+        <div class="col-6">Buried by</div>
+        <div class="col-6">{{ parishioner.death_detail.all.0.buried_by }}</div>
+      </div>
+    {% elif parishioner.status == 'Deleted' %}
+      <div class="row">
+        <div class="col-6">Deleted by</div>
+        <div class="col-6">{{ parishioner.deleted_by }} on {{ parishioner.deleted_on }}</div>
+      </div>
+    {% endif %}
+    <div class="row">
+      <div class="col-6">Charisma</div>
+      <div class="col-6">
+        {{ parishioner.charisma }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6">Registered By</div>
+      <div class="col-6">
+        {{ parishioner.created_by }} on 
+        {{ parishioner.created_on }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6">Updated By</div>
+      <div class="col-6">
+        {{ parishioner.modified_by }} on 
+        {{ parishioner.modified_on }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

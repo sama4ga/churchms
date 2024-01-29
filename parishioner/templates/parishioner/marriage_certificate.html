@@ -1,0 +1,126 @@
+{% extends 'church/base.html' %}
+{% load static %}
+{% load custom_templatetags %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'plugins/select2/css/select2.min.css' %}"
+{% endblock %}
+
+
+{% block container %}
+  
+  <div class="no-print">
+    <h1 class="mb-3">Marriage Certificate</h1>
+    <div class="mx-auto my-3" style="max-width: 500px;">
+      <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="pk">Choose parishioner</label>
+          <select name="pk" id="pk" class="form-control"></select>
+        </div>
+        <div class="mb-3" align='right'>
+          <button type="submit" class="btn btn-md btn-primary" style="width:75px;">Get</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% if records %}
+  
+    <div align='right' class="no-print">
+      <button onclick="window.print()" class="btn btn-outline-primary"><i class="fa fa-print"></i> Print</button>
+    </div>
+    
+    {% for record in records %}
+    <div class="certificate mx-auto">
+      <div class="header">
+        <img src='{{setting.church_logo.url }}' />
+        <div class="text-center">
+          <div class="church-name">{{setting.church_name}}</div>
+          <div class="church-address">{{setting.church_address}}</div>
+        </div>
+        <img src='{{setting.church_saint_logo.url }}' />
+      </div>
+      <div class="body">
+        <p class="title" align='center'>Certificate of Marriage</p>
+        <div class="accord" align='center'>According to the Marriage Register kept at</div>
+        <div class="border-bottom"><span style="width:80%;">{{setting.church_name}}</span> <span>No.: {{record.regNo|str_pad0:setting.matrimony_reg_no_length}}</span></div>
+        <p align='center'>Between</p>
+        <div class="border-bottom">{{record.groom}}</div>
+        <div class="border-bottom"><span class="desc">Son of:</span> {{record.groom_parent}}</div>
+        <div class="border-bottom"><span class="desc">of:</span> {{record.groom_village}}</div>
+        <p align='center'>And</p>
+        <div class="border-bottom">{{record.bride}}</div>
+        <div class="border-bottom"><span class="desc">Daughter of:</span>{{record.bride_parent}}</div>
+        <div class="border-bottom"><span class="desc">of:</span> {{record.bride_village}}</div>
+        <div class="border-bottom"><span class="desc">were married in:</span> {{setting.church_name}}</div>
+        <p class="text-bold text-danger mt-3" style="margin-bottom:40px;">according to the Right of Roman Catholic Church</p>
+        <div class="border-bottom"><span class="desc">Witness:</span>{{record.sponsor}}</div>
+        <div class="border-bottom"><span class="desc">of:</span>{{record.sponsor_address}}</div>
+        <div class="border-bottom"><span class="desc">Date:</span>{{record.date|date:'l jS F Y'}}</div>
+        <div class="border-bottom"><span class="desc">Name of Priest:</span>{{record.minister}}</div>
+        <div class="border-bottom"><span class="desc">Issued by:</span>{{record.minister}}
+        </div>
+        
+      </div>
+      <div class="footer"></div>
+    </div>
+    {% endfor %}
+  {% endif %}
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'plugins/select2/js/select2.min.js' %}"></script>
+
+<script>
+$(document).ready(function(){
+  
+  $('#pk').select2({
+  ajax: {
+    url: baseurl + "/api/parishioner/datatable",
+    dataType: 'json',
+    delay: 250,
+    data: function (params) {
+      return {
+        'search[value]': params.term,
+        'start': params.page || 0,
+        'length': 30
+      };
+    },
+    processResults: function (data, params) {
+      params.page = params.page || 1;
+
+      return {
+        results: data.data,
+        pagination: {
+          more: (params.page * 30) < data.recordsFiltered
+        }
+      };
+    },
+    cache: true
+  },
+  placeholder: 'Search for a parishioner',
+  minimumInputLength: 2,
+  templateResult: formatResult,
+  templateSelection: formatResultSelection
+});
+
+function formatResult (parishioner) {
+  if (parishioner.loading) {
+    return parishioner.text;
+  }
+
+  var $container = $(
+    `<option>${parishioner.fullname}</option>`
+  );
+  return $container;
+}
+
+function formatResultSelection (parishioner) {
+  return parishioner.fullname || parishioner.text;
+}
+
+$('.select2-selection').css('height', '35px');
+});
+
+</script>
+{% endblock %}

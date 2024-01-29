@@ -1,0 +1,435 @@
+{% extends 'church/base.html' %}
+{% load static %}
+
+{% block style %}
+<link href="{% static 'plugins/chart.js/Chart.min.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/fullcalendar/main.min.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/daterangepicker/daterangepicker.css' %}" rel="stylesheet" />
+
+{% endblock %}
+
+{% block container %}
+<div>
+  
+  <div class="d-flex" style="justify-content:space-evenly; margin-bottom:50px;">
+    <img src="{{setting.church_logo.url}}" style="max-width:150px; width:70px; max-height:150px; height:70px;border-radius:50%;" />
+    <div>
+      <div style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-weight: bold; font-size: x-large;">{{setting.church_name}}</div>
+      <div style="font-style: italic; text-align: center;">{{setting.church_address}}</div>
+    </div>
+    <img src="{{setting.church_saint_logo.url}}" style="max-width:150px; width:70px; max-height:150px; height:70px;border-radius:50%;" />
+  </div>
+  
+  <div>
+    <div class="my-3">
+    
+      <div>
+        <div class="info-box info-box-new-style">
+          <span class="info-box-icon bg-green">
+            <i class="fa fa-users"></i>
+          </span>
+      
+          <div class="info-box-content">
+            <h2 class="info-box-text">Parishioner statistics</h2>
+            <span class="info-box-number net">
+              <!-- <i class="fas fa-sync fa-spin fa-fw margin-bottom"></i> -->
+              {{parishioners_count}}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 card">
+          <h3 class="card-header">By Status</h3>
+          <canvas class="card-body" id="parishioner_status" style="min-height: 250px; max-height: 500px; max-width: 100%;"></canvas>
+        </div>
+        <div class="col-md-6 card">
+          <h3 class="card-header">By Sacrament received</h3>
+          <div class="card-body">
+            <div class="card card-body mb-4">
+              <p class="text-uppercase clearfix">
+                Baptism <span class="float-right">{{baptised_parishioners_perc}}%</span>
+              </p>
+              <div class="progress-group">
+                <div class="progress progress-minibar">
+                  <div class="progress-bar progress-bar-green" style="width: {{baptised_parishioners_perc}}%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="card card-body mb-4">
+              <p class="text-uppercase clearfix">
+                Communion <span class="float-right">{{communicant_parishioners_perc}}%</span>
+              </p>
+              <div class="progress-group">
+                <div class="progress progress-minibar">
+                  <div class="progress-bar progress-bar-green" style="width: {{communicant_parishioners_perc}}%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="card card-body mb-4">
+              <p class="text-uppercase clearfix">
+                Confirmed <span class="float-right">{{confirmed_parishioners_perc}}%</span>
+              </p>
+              <div class="progress-group">
+                <div class="progress progress-minibar">
+                  <div class="progress-bar progress-bar-green" style="width: {{confirmed_parishioners_perc}}%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="card card-body mb-4">
+              <p class="text-uppercase clearfix">
+                Wedded <span class="float-right">{{wedded_parishioners_perc}}%</span>
+              </p>
+              <div class="progress-group">
+                <div class="progress progress-minibar">
+                  <div class="progress-bar progress-bar-green" style="width: {{wedded_parishioners_perc}}%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3 card">
+      <h2 class="card-header">Sacrament Register</h2>
+      <canvas class="card-body" id="sacrament" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-body p-0">
+            <div id="calendar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header">
+        <h2 class="">Group Records</h2>
+      </div>
+      <div class="card-body">
+        <div class="row my-1 py-1">
+          <div class="col-10">Stations</div>
+          <div class="col-2">{{station_record}}</div>
+        </div>
+        <div class="row my-1 py-1">
+          <div class="col-10">Organisations</div>
+          <div class="col-2">{{organisation_record}}</div>
+        </div>
+        <div class="row my-1 py-1">
+          <div class="col-10">Pious Societies</div>
+          <div class="col-2">{{pious_society_record}}</div>
+        </div>
+        <div class="row my-1 py-1">
+          <div class="col-10">Other Groups</div>
+          <div class="col-2">{{other_group_record}}</div>
+        </div>
+        <div class="row my-1 py-1">
+          <div class="col-10">Lay Apostolate</div>
+          <div class="col-2">{{lay_apostolate_record}}</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  
+  
+</div>
+
+<div class="modal fade" id="event" tabindex="-1" role="dialog" aria-labelledby="eventTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="eventTitle">Events</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="color">Choose event color</label>
+          <div class="btn-group" style="width: 100%; margin-bottom: 10px;">
+            <ul class="fc-color-picker" id="color">
+              <li>
+                <a class="text-primary"><i class="fas fa-square"></i></a>
+              </li>
+              <li>
+                <a class="text-warning"><i class="fas fa-square"></i></a>
+              </li>
+              <li>
+                <a class="text-success"><i class="fas fa-square"></i></a>
+              </li>
+              <li>
+                <a class="text-secondary"><i class="fas fa-square"></i></a>
+              </li>
+              <li>
+                <a class="text-danger"><i class="fas fa-square"></i></a>
+              </li>
+              <li>
+                <a class="text-info"><i class="fas fa-square"></i></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="title">Title</label>
+          <input id="title" class="form-control" />
+          <input type="hidden" id="id" />
+        </div>
+        <div class="mb-3">
+          <label for="description">Description</label>
+          <textarea id="description" class="form-control"></textarea>
+        </div>
+        <div class="mb-3">
+          <div class="checkbox my-2">
+            <label for="all_day">
+              <input type="checkbox" id="all_day" /> All Day
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="start">Start</label>
+              <input type="datetime-local" id="start" class="datetime form-control" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="end">End</label>
+              <input type="datetime-local" id="end" class="datetime form-control" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-type="create" onclick="saveEvent(this)" id="save"> Save</button>
+        <button type="button" class="btn btn-danger d-none" onclick="deleteEvent(this)" id="delete"> Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<!-- jQuery UI -->
+<script src="{% static 'plugins/jquery-ui/jquery-ui.min.js' %}"></script>
+<script src="{% static 'plugins/chart.js/Chart.min.js' %}"></script>
+<script src="{% static 'plugins/moment/moment.min.js' %}"></script>
+<script src="{% static 'plugins/daterangepicker/daterangepicker.js' %}"></script>
+<script src="{% static 'plugins/fullcalendar/main.min.js' %}"></script>
+<script src="{% static 'js/home.js' %}"></script>
+
+<script>
+$(function(){
+  'use strict'
+  
+  
+  const ticksStyle = {
+    fontColor: '#495057',
+    fontStyle: 'bold'
+  }
+
+  const mode = 'index';
+  const intersect = true;
+  
+  const $parishionerStatusChart = $('#parishioner_status').get(0).getContext('2d');
+  const parishionerStatusChart = new Chart($parishionerStatusChart, {
+    type: 'doughnut',
+    data: {
+      labels: ['Active', 'Inactive', 'Suspended', 'Domiciled', 'Probation', 'Dead'],
+      datasets: [
+        {
+          backgroundColor: ['#f56954', '#00a65a', '#007bff', '#552211', '#2200ff', '#ff00ff'],
+          data: ['{{active_parishioners}}', '{{inactive_parishioners}}', '{{suspended_parishioners}}',
+          '{{domiciled_parishioners}}', '{{probation_parishioners}}', '{{dead_parishioners}}']
+        }
+      ]
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+    }
+  });
+  
+  const $sacramentChart = $('#sacrament');
+  const sacramentChart = new Chart($sacramentChart, {
+    type: 'bar',
+    data: {
+      labels: ['Baptism', 'Communion', 'Confirmation', 'Matrimony'],
+      datasets: [
+        {
+          backgroundColor: ['#f56954', '#00a65a', '#7700aa', '#c5b6c7'],
+          borderColor: '#007bff',
+          data: ['{{baptism_record}}', '{{communion_record}}', '{{confirmation_record}}', '{{matrimony_record}}']
+        }
+      ]
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      tooltips: {
+        mode: mode,
+        intersect: intersect
+      },
+      hover: {
+        mode: mode,
+        intersect: intersect
+      },
+      legend: {
+        display: false
+      },
+      scales: {
+        yAxes: [{
+          gridLines: {
+            display: true,
+            lineWidth: '4px',
+            color: 'rgba(0, 0, 0, .2)',
+            zeroLineColor: 'transparent'
+          },
+          ticks: $.extend({
+            beginAtZero: true,
+          }, ticksStyle)
+        }],
+        xAxes: [{
+          display: true,
+          gridLines: {
+            display: false
+          },
+          ticks: ticksStyle
+        }]
+      }
+    }
+  });
+  
+})
+
+$("#all_day").on("change", function (e) {
+  if ($(this).is(":checked")) {
+    $("#end").prop("disabled", true);
+  }else{
+    $("#end").prop("disabled", false);
+  }
+})
+
+var eventColor = "#3c8dbc";
+$('#color > li > a').click(function (e) {
+  e.preventDefault();
+  eventColor = $(this).css('color');
+});
+
+function saveEvent(e) {
+  const type = $(e).attr('data-type');
+  if (type == 'create') {
+    const url = baseurl + '/calendar/create_event/';
+    const all_day = $("#all_day").prop("checked");
+    let start = $("#start").val();
+    let end = $("#end").val();
+    if (all_day) {
+      start = formatDate(start) + " 00:00";
+      end = formatDate(start)  + " 23:59";
+    }else{
+      start = formatDateTime(start);
+      end = formatDateTime(end);
+    }
+    // console.log(start, end);
+    $.get(url, {
+      'start': start,
+      'end': end,
+      'title': $("#title").val(),
+      'description': $("#description").val(),
+      'allDay': all_day ? "True" : "False",
+      'color': eventColor,
+    }, function(data, status, xhr){
+      // console.log(data)
+      if (status == "success" && data == "success") {
+        successMsg("Event successfully created!");
+        window.location.reload();
+      } else {
+        errorMsg("Error while creating event");
+      }
+    }).fail(function (xhr, textStatus, errorThrown) {
+      if(xhr.status == 403){
+        errorMsg('Access denied');
+      }
+    }).always(function (xhr, textStatus) {
+      clearEventInput();
+      $("#event").modal('hide');
+    })
+  }else{
+    const url = baseurl + '/calendar/update_event/'+ $("#id").val() + "/";
+    const all_day = $("#all_day").prop("checked");
+    let start = $("#start").val();
+    let end = $("#end").val();
+    if (all_day) {
+      start = formatDate(start) + " 00:00";
+      end = formatDate(start)  + " 23:59";
+    }else{
+      start = formatDateTime(start);
+      end = formatDateTime(end);
+    }
+    // console.log(start, end);
+    $.get(url, {
+      'start': start,
+      'end': end,
+      'title': $("#title").val(),
+      'description': $("#description").val(),
+      'allDay': all_day ? "True" : "False",
+      'color': eventColor,
+    }, function(data, status, xhr){
+      console.log(data)
+      if (status == "success" && data == "success") {
+        successMsg("Event successfully updated!");
+        window.location.reload();
+      } else {
+        errorMsg("Error while updating event");
+      }
+    }).fail(function (xhr, textStatus, errorThrown) {
+      if(xhr.status == 403){
+        errorMsg('Access denied');
+      }
+    }).always(function (xhr, textStatus) {
+      clearEventInput();
+      $("#event").modal('hide');
+    })
+  }
+}
+
+function deleteEvent(e) {
+  const url = baseurl + '/calendar/delete_event/' + $("#id").val() + "/";
+  
+  $.get(url, {}, function(data, status, xhr){
+    console.log(data)
+    if (status == "success" && data == "success") {
+      successMsg("Event successfully deleted!");
+      window.location.reload();
+    } else {
+      errorMsg("Error while deleting event");
+    }
+  }).fail(function (xhr, textStatus, errorThrown) {
+    if(xhr.status == 403){
+      errorMsg('Access denied');
+    }
+  }).always(function (xhr, textStatus) {
+    $("#event").modal('hide');
+    $("#delete").addClass('d-none');
+  })
+}
+
+function clearEventInput() {
+  $("#title").val("");
+  $("#description").val("");
+  $("#all_day").prop("checked", false);
+  $("#start").val("");
+  $("#end").val("");
+}
+
+
+</script>
+
+{% endblock %}

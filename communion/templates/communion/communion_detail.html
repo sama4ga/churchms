@@ -1,0 +1,34 @@
+{% extends 'church/base.html' %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">Communion</li>
+{% endblock %}
+
+{% block container %}
+<div>
+  <h1 class="mb-4">Communion Card</h1>
+  
+  <div class="table-responsive">
+    <table class="table display" style="width:100%;">
+      <tbody>
+        <tr>
+          <td>Name</td>
+          <td>{{communion.candidate}}</td>
+        </tr>
+        <tr>
+          <td>Minister</td>
+          <td>{{communion.minister}}</td>
+        </tr>
+        <tr>
+          <td>Sponsor</td>
+          <td>{{communion.sponsor}}</td>
+        </tr>
+        <tr>
+          <td>Date</td>
+          <td>{{communion.date}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
