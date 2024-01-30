@@ -51,23 +51,6 @@ def home(request):
   context['suspended_parishioners'] = parishioners.filter(status='Suspended').count()
   context['domiciled_parishioners'] = parishioners.filter(status='Domiciled').count()
   context['probation_parishioners'] = parishioners.filter(status='Probation').count()
-<<<<<<< HEAD
-=======
-  if living_parishioners > 0:
-    context['baptised_parishioners_perc'] = round((parishioners.filter(baptised=True).count()/living_parishioners)*100,2)
-    context['communicant_parishioners_perc'] = round((parishioners.filter(communicant=True).count()/living_parishioners)*100,2)
-    context['confirmed_parishioners_perc'] = round((parishioners.filter(confirmed=True).count()/living_parishioners)*100,2)
-    context['wedded_parishioners_perc'] = round((parishioners.filter(wedded=True).count()/living_parishioners)*100,2)
-  else:
-    context['baptised_parishioners_perc'] = 0
-    context['communicant_parishioners_perc'] = 0
-    context['confirmed_parishioners_perc'] = 0
-    context['wedded_parishioners_perc'] = 0
-  context['communicant_parishioners'] = parishioners.filter(communicant=True).count()
-  context['confirmed_parishioners'] = parishioners.filter(confirmed=True).count()
-  context['baptised_parishioners'] = parishioners.filter(baptised=True).count()
-  context['wedded_parishioners'] = parishioners.filter(wedded=True).count()
->>>>>>> a0838b57453319060a2d02e5e85bba5b3182ddc1
   context['dead_parishioners'] = parishioners.filter(status='Dead').count()
   context['communicant_parishioners'] = communicant_parishioners
   context['confirmed_parishioners'] = confirmed_parishioners

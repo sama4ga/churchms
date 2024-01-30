@@ -13,16 +13,22 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 import os
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+DEBUG = True
+
+if DEBUG:
+  from dotenv import load_dotenv
+  load_dotenv(".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -55,7 +61,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    # "whitenoise.runserver_nostatic",
+    "whitenoise.runserver_nostatic",
     'django.contrib.staticfiles',
     'rest_framework',
     'widget_tweaks',
@@ -100,7 +106,7 @@ WSGI_APPLICATION = 'churchms.wsgi.application'
 
 if DEBUG:
   DATABASES = {
-    'sqlite': {
+    'default': {
       'ENGINE': 'django.db.backends.sqlite3',
       'NAME': BASE_DIR / 'db.sqlite3',
       'CONN_MAX_AGE': 3600
@@ -114,14 +120,21 @@ else:
   DATABASES = {
     'default': {
       'ENGINE': 'django.db.backends.postgresql_psycopg2',
-      'NAME': os.environ["PGDATABASE"],
-      'USER': os.environ["PGUSER"],
-      'PASSWORD': os.environ["PGPASSWORD"],
-      'HOST': os.environ["PGHOST"],
-      'PORT': os.environ["PGPORT"],
+      'NAME': os.environ.get("PGDATABASE"),
+      'USER': os.environ.get("PGUSER"),
+      'PASSWORD': os.environ.get("PGPASSWORD"),
+      'HOST': os.environ.get("PGHOST"),
+      'PORT': os.environ.get("PGPORT"),
       'CONN_MAX_AGE': 3600
     }
   }
+
+  EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+  EMAIL_HOST = 'smtp.gmail.com'
+  EMAIL_PORT = 587
+  EMAIL_USE_TLS = True
+  EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER") 
+  EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 
 
 CONN_HEALTH_CHECKS = True
@@ -129,55 +142,32 @@ CONN_HEALTH_CHECKS = True
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
-            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-            "style": "{",
-        },
-        "simple": {
-            "format": "{levelname} {message}",
-            "style": "{",
-        },
-    },
-    "filters": {
-        "special": {
-            "()": "project.logging.SpecialFilter",
-            "foo": "bar",
-        },
-        "require_debug_true": {
-            "()": "django.utils.log.RequireDebugTrue",
-        },
-    },
+      "formatters": {
+          "verbose": {
+              "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+              "style": "{",
+          },
+          "simple": {
+              "format": "{levelname} {message}",
+              "style": "{",
+          },
+      },
     "handlers": {
-        "console": {
-            "level": "INFO",
-            "filters": ["require_debug_true"],
-            "class": "logging.StreamHandler",
-            "formatter": "simple",
-        },
-        "mail_admins": {
-            "level": "ERROR",
-            "class": "django.utils.log.AdminEmailHandler",
-            "filters": ["special"],
+        "file": {
+            "level": os.environ.get("DJANGO_LOG_LEVEL"),
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "logs/debug.log"),
         },
     },
     "loggers": {
         "django": {
-            "handlers": ["console"],
+            "handlers": ["file"],
+            "level": os.environ.get("DJANGO_LOG_LEVEL"),
             "propagate": True,
-        },
-        "django.request": {
-            "handlers": ["mail_admins"],
-            "level": "ERROR",
-            "propagate": False,
-        },
-        "myproject.custom": {
-            "handlers": ["console", "mail_admins"],
-            "level": "INFO",
-            "filters": ["special"],
         },
     },
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -201,6 +191,9 @@ STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
+    "default": {
+      "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    }
 }
 
 
@@ -220,7 +213,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = 'media/'
@@ -235,17 +227,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'users-login'
 LOGIN_REDIRECT_URL = 'church-home'
 
-DEFAULT_FROM_EMAIL = os.environ["SECRET_KEY"]   #config['EMAIL_USER']
-SERVER_EMAIL = os.environ['EMAIL_USER']
+DEFAULT_FROM_EMAIL = os.environ.get("EMAIL_HOST_USER")   #config['EMAIL_USER']
+SERVER_EMAIL = os.environ.get("EMAIL_HOST_USER") 
 # CSRF_COOKIE_SECURE = True
 # SESSION_COOKIE_SECURE = True
 # CSRF_TRUSTED_ORIGINS = [
 #     'https://your-base-domain'
 # ]
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ['EMAIL_USER']
-EMAIL_HOST_PASSWORD = os.environ['EMAIL_PASSWORD']

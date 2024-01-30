@@ -158,6 +158,9 @@ sent_emails
 # plugins
 plugins/
 
+# logs
+logs
+
 
 !church/static/dist/
 !church/static/plugins/

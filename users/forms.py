@@ -37,7 +37,6 @@ class CustomUserCreationForm(UserCreationForm):
     return password2  
   
   def save(self, commit=True):
-    print(self.cleaned_data['passport'])
     user = User.objects.create_user(  
       username=self.cleaned_data['username'],  
       email=self.cleaned_data['email'],  
@@ -47,7 +46,10 @@ class CustomUserCreationForm(UserCreationForm):
     )
     user.groups.clear()
     user.groups.add(self.cleaned_data['group'])
-    profile = Profile(user=user, passport=self.cleaned_data['passport'])
+    if self.cleaned_data['passport'] is None:
+      profile = Profile(user=user)
+    else:
+      profile = Profile(user=user, passport=self.cleaned_data['passport'])
     profile.save()
     return user  
 
