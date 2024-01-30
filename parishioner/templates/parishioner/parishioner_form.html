@@ -1,5 +1,6 @@
 {% extends 'church/base.html' %}
 {% load widget_tweaks %}
+{% load static %}
 
 {% block breadcrumb %}
 <li class="breadcrumb-item">
@@ -142,7 +143,7 @@
           </div>
           <div class="col-3">
             <div class="mb-3">
-              <img src="{% if parishioner %}{{parishioner.passport.url}} {% else %}/media/user_default.jfif{% endif %}" alt="passport" id="passport" width="150" height="100" class="mb-3 rounded-circle" />
+              <img src="{% if parishioner %}{{parishioner.passport.url}} {% else %} {% static 'user_default.jfif' %} {% endif %}" alt="passport" id="passport" width="150" height="100" class="mb-3 rounded-circle" />
               {% render_field form.passport class='form-control' %}
               <small class="error text-danger">{{ form.passport.errors }}</small>
             </div>

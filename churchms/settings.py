@@ -142,21 +142,33 @@ CONN_HEALTH_CHECKS = True
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-      "formatters": {
-          "verbose": {
-              "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-              "style": "{",
-          },
-          "simple": {
-              "format": "{levelname} {message}",
-              "style": "{",
-          },
-      },
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
+    "filters": {
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
+        },
+    },
     "handlers": {
         "file": {
             "level": os.environ.get("DJANGO_LOG_LEVEL"),
             "class": "logging.FileHandler",
             "filename": os.path.join(BASE_DIR, "logs/debug.log"),
+            "formatter": "verbose",
+        },
+        "console": {
+            "level": "INFO",
+            "filters": ["require_debug_true"],
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
         },
     },
     "loggers": {
